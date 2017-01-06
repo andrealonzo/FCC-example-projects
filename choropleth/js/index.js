@@ -1,27 +1,19 @@
 const project_name="choropleth"
-var svg = d3.select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
 
 // Define body
 var body = d3.select("body");
 
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+
 // Define the div for the tooltip
 var tooltip = body.append("div")
-.attr("class", "tooltip")
-.attr("id", "tooltip")
-.style("opacity", 0);
+  .attr("class", "tooltip")
+  .attr("id", "tooltip")
+  .style("opacity", 0);
 
-// Add title and description
-var heading = body.append("heading");
-
-heading.append("h1")
-  .attr('id', 'title')
-  .text("United States Median Income");
-
-heading.append("h3")
-  .attr('id', 'description')
-  .text("Data from x")
 
 var unemployment = d3.map();
 
