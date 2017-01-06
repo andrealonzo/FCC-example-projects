@@ -1,5 +1,25 @@
 const project_name="tree-map"
 
+// Define body
+var body = d3.select("body");
+
+// Add title and description
+var heading = body.append("heading");
+
+heading.append("h1")
+  .attr('id', 'title')
+  .text("Video Game Sales in 2014");
+
+heading.append("h3")
+  .attr('id', 'description')
+  .text("Data from x")
+  
+// Define the div for the tooltip
+var tooltip = body.append("div")
+  .attr("class", "tooltip")
+  .attr("id", "tooltip")
+  .style("opacity", 0);
+
 var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
@@ -14,11 +34,11 @@ var treemap = d3.treemap()
     .round(true)
     .paddingInner(1);
 
-//var FILE_PATH = "data/Video_Games_Sales_small.csv"
+var FILE_PATH = "data/Video_Games_Sales_small.csv"
 //var FILE_PATH = "data/Video_Games_Sales_as_at_22_Dec_2016.csv"
 //var FILE_PATH = "data/Video_Games_Sales_Top_1000.csv"
 //var FILE_PATH = "data/Video_Games_Sales_Top_200.csv"
-var FILE_PATH = "data/Video_Games_Sales_2014.csv"
+//var FILE_PATH = "data/Video_Games_Sales_2014.csv"
 d3.csv(FILE_PATH, function(error,data){
   
   if (error) throw error;
@@ -66,8 +86,31 @@ d3.csv(FILE_PATH, function(error,data){
 
   cell.append("rect")
       .attr("id", function(d) { return d.data.id; })
+      .attr("class", "tile")
       .attr("width", function(d) { return d.x1 - d.x0; })
       .attr("height", function(d) { return d.y1 - d.y0; })
+      .attr("data-name", function(d){
+        return d.data.name;
+      })
+      .attr("data-platform", function(d){
+        return d.data.platform;
+      })
+      .attr("data-sales", function(d){
+        return d.data.sales;
+      })
+      .on("mouseover", function(d) {      
+        tooltip.style("opacity", .9); 
+        tooltip.html(function() {
+          return d.data.name + d.data.platform + d.data.sales;
+        })
+        .style("left", (d3.event.pageX) + "px") 
+        .style("top", (d3.event.pageY - 28) + "px"); 
+      }) 
+      
+      
+      .on("mouseout", function(d) { 
+        tooltip.style("opacity", 0); 
+      })
       .attr("fill", function(d) { return color(d.parent.data.id); });
 
   cell.append("clipPath")

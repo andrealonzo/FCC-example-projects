@@ -21051,7 +21051,7 @@ var FCC_Global =
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	exports.default = createTreeMapTests;
 
@@ -21063,19 +21063,131 @@ var FCC_Global =
 
 	function createTreeMapTests() {
 
-	    // returns a random index number
-	    function getRandomIndex(max) {
-	        return Math.floor(Math.random() * max);
-	    }
+	  // returns a random index number
+	  function getRandomIndex(max) {
+	    return Math.floor(Math.random() * max);
+	  }
 
-	    describe('#TreeMapTests', function () {
+	  describe('#TreeMapTests', function () {
 
-	        describe('#Content', function () {
-	            it('1. I can see a title element that has a corresponding id="title".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById('title'), 'Could not find element with id="title" ');
-	            });
+	    describe('#Content', function () {
+	      it('1. My tree map should have a title with a corresponding id="title"', function () {
+	        FCC_Global.assert.isNotNull(document.getElementById('title'), 'Could not find element with id="title" ');
+	      });
+	      it('2. My tree map should have a description with a corresponding id="description"', function () {
+	        FCC_Global.assert.isNotNull(document.getElementById('description'), 'Could not find element with id="description" ');
+	      });
+	      it('3. My tree map should have tiles with a corresponding class="tile" that represent the data', function () {
+	        FCC_Global.assert.isAbove(document.querySelectorAll('.tile').length, 0, 'Could not find elements with class="tile" ');
+	      });
+	      it('4. There should be at least 4 different fill colors used for the tiles', function () {
+	        var tiles = document.querySelectorAll('.tile');
+	        var uniqueColors = [];
+
+	        for (var i = 0; i < tiles.length; i++) {
+	          var tileColor = tiles[i].style.fill || tiles[i].getAttribute('fill');
+
+	          // if the current color isn't in the uniqueColors arr, push it 
+	          if (uniqueColors.indexOf(tileColor) === -1) {
+	            uniqueColors.push(tileColor);
+	          }
+	        }
+	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be more than four fill colors used for the tiles');
+	      });
+	      it('5. Each tile will have the properties "data-name", "data-platform", "data-sales" containing their corresponding name, platform, and sales values', function () {
+	        var tiles = document.querySelectorAll('.tile');
+	        FCC_Global.assert.isAbove(tiles.length, 0, "Could not find any elements with a class=\"tile\"");
+
+	        for (var i = 0; i < tiles.length; i++) {
+	          var tile = tiles[i];
+	          FCC_Global.assert.isNotNull(tile.getAttribute("data-name"), "Could not find property 'data-name' in tile");
+	          FCC_Global.assert.isNotNull(tile.getAttribute("data-platform"), "Could not find property 'data-platform' in tile");
+	          FCC_Global.assert.isNotNull(tile.getAttribute("data-sales"), "Could not find property 'data-sales' in tile");
+	        }
+	      });
+
+	      it('10.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
+
+	        var firstRequestTimeout = 100;
+	        var secondRequestTimeout = 2000;
+	        this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
+	        FCC_Global.assert.isNotNull(document.getElementById('tooltip'), 'There should be an element with id="tooltip"');
+
+	        function getToolTipStatus(tooltip) {
+	          // jQuery's :hidden selector checks if the element or its parents have a display of none, a type of hidden, or height/width set to 0
+	          // if the element is hidden with opacity=0 or visibility=hidden, jQuery's :hidden will return false because it takes up space in the DOM
+	          // this test combines jQuery's :hidden with tests for opacity and visbility to cover most use cases (z-index and potentially others are not tested)
+	          if ((0, _jquery2.default)(tooltip).is(':hidden') || tooltip.style.opacity === '0' || tooltip.style.visibility === 'hidden') {
+	            return 'hidden';
+	          } else {
+	            return 'visible';
+	          }
+	        }
+
+	        var tooltip = document.querySelectorAll('#tooltip');
+
+	        var tiles = document.querySelectorAll('.tile');
+
+	        // place mouse on random bar and check if tooltip is visible
+	        var randomIndex = getRandomIndex(tiles.length);
+	        var randomTile = tiles[randomIndex];
+	        console.log('tooltip before mouseover: ', tooltip[randomIndex]);
+	        randomTile.dispatchEvent(new MouseEvent('mouseover'));
+	        console.log('tooltip after mouseover: ', tooltip[randomIndex]);
+
+	        // promise is used to prevent test from ending prematurely
+	        return new Promise(function (resolve, reject) {
+	          // timeout is used to accomodate tooltip transitions
+	          setTimeout(function (_) {
+	            if (getToolTipStatus(tooltip) !== 'visible') {
+	              reject(new Error('Tooltip should be visible when mouse is on an area'));
+	            }
+
+	            // remove mouse from cell and check if tooltip is hidden again
+	            randomTile.dispatchEvent(new MouseEvent('mouseout'));
+	            setTimeout(function (_) {
+	              if (getToolTipStatus(tooltip) !== 'hidden') {
+	                reject(new Error('Tooltip should be hidden when mouse is not on an area'));
+	              } else {
+	                resolve();
+	              }
+	            }, secondRequestTimeout);
+	          }, firstRequestTimeout);
 	        });
+	      });
+
+	      //1. My tree map should have a title with a corresponding id="title"
+	      // 2. My tree map should have a description with a corresponding id="description"
+	      // 3. My tree map should have tiles with a corresponding class="tile" that represent the data
+	      // 4. There should be at least 4 different fill colors used for the cells
+	      // 5. Each cell will have the properties "data-name", "data-platform", "data-sales" containing their corresponding name, platform, and sales values
+	      // 6. The "data-name", "data-platform", "data-aaa" of each cell should be within the range of the data
+	      // 7. The area of each cell should correspond to the sales amount.
+	      // //Get all cells
+	      // //calculate area of each cell
+	      // //sort cells by area
+	      // //see if the data-sales of each cell are sorted as well
+	      // 
+	      // 8.  Check if cells are grouped by data-platform (don't know how to check this)
+	      // 8.  Check if each platform grouping area corresponds to the cumulative data-sales of each video game (don't know how to check this)
+	      // 
+	      // 
+	      // 
+	      //  
+	      // 8. My tree map should have a legend with corresponding id="legend"
+	      // 9. I can mouse over a cell and see a tooltip with a corresponding id="tooltip" which displays more information about the cell
+	      // 10. My tooltip should have a "data-???" property that corresponds to the given year of the active cell
+	      // 
+	      // Bonus stories
+	      // 11.  I can filter the treemap by year (ex.  Only show games from 2014)
+	      // 12.  I can limit the amount of video games shown (ex.  Only show top 100)
+	      // 
+	      // Super bonus stories
+	      // 13.  I can group the video games by year instead of platform
+	      // 14.  I can zoom ?  Here's an example http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
+	      // 
 	    });
+	  });
 	}
 
 /***/ }
