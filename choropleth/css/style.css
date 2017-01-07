@@ -11,7 +11,7 @@ body {
 }
 
 #main {
-  width: 1200px;
+  width: 1000px;
   display: flex;
   padding-top: 4rem;
   flex-direction: column;
@@ -31,10 +31,11 @@ body {
 div.tooltip {
   position: absolute;
   padding: 10px;                
-  font: 12px sans-serif;        
-  background: lightsteelblue;    
+  font: 12px Arial;        
+  background: rgba(255, 255, 204, 0.9);
+  box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.6);
   border: 0px;        
-  border-radius: 8px;            
+  border-radius: 2px;            
   pointer-events: none;            
 }
 
@@ -43,6 +44,14 @@ div.tooltip {
 }
 
 #description {
+  text-align: center;
+}
+
+#source {
   align-self: flex-end;
   margin-top: 1rem;
+}
+
+a {
+  text-decoration: none;
 }
