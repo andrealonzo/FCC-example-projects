@@ -76,7 +76,7 @@ function ready(error, us, education) {
       .selectAll("path")
       .data(topojson.feature(us, us.objects.counties).features)
       .enter().append("path")
-      .attr("class", "area")
+      .attr("class", "county")
       .attr("data-fips", function(d) {
         return d.id
        })
