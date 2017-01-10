@@ -1,67 +1,571 @@
 {
- "name": "Video Game Sales",
- "children": [
-  {
-   "name": "Wii",
-   "children": [
-     {
-       "name":"Wii Sports",
-       "size": "82.53"
-     },
-     {
-       "name":"Mario Kart Wii",
-       "size": "35.52"
-     },
-     {
-       "name":"Wii Sports Resort",
-       "size": "32.77"
-     },
-     {
-       "name":"Wii Play",
-       "size": "28.92"
-     }
-   ]
-  },
-  {
-    "name": "GB",
-    "children": [
-      {
-        "name":"Pokemon Red/Pokemon Blue",
-        "size": "31.37"
-      },
-      {
-        "name":"Tetris",
-        "size": "30.26"
-      },
-      {
-        "name":"Pokemon Gold/Pokemon Silver",
-        "size": "23.1"
-      },
-      {
-        "name":"Super Mario Land",
-        "size": "18.14"
-      }
+    "name": "Video Game Sales Data Top 100",
+    "children": [{
+            "name": "2600",
+            "children": [{
+                "name": "Pac-Man",
+                "platform": "2600",
+                "sales": "7.81"
+            }]
+        },
+        {
+            "name": "Wii",
+            "children": [{
+                    "name": "Wii Sports",
+                    "platform": "Wii",
+                    "sales": "82.53"
+                },
+                {
+                    "name": "Mario Kart Wii",
+                    "platform": "Wii",
+                    "sales": "35.52"
+                },
+                {
+                    "name": "Wii Sports Resort",
+                    "platform": "Wii",
+                    "sales": "32.77"
+                },
+                {
+                    "name": "Wii Play",
+                    "platform": "Wii",
+                    "sales": "28.92"
+                },
+                {
+                    "name": "New Super Mario Bros. Wii",
+                    "platform": "Wii",
+                    "sales": "28.32"
+                },
+                {
+                    "name": "Wii Fit",
+                    "platform": "Wii",
+                    "sales": "22.7"
+                },
+                {
+                    "name": "Wii Fit Plus",
+                    "platform": "Wii",
+                    "sales": "21.79"
+                },
+                {
+                    "name": "Super Smash Bros. Brawl",
+                    "platform": "Wii",
+                    "sales": "12.84"
+                },
+                {
+                    "name": "Super Mario Galaxy",
+                    "platform": "Wii",
+                    "sales": "11.35"
+                },
+                {
+                    "name": "Just Dance 3",
+                    "platform": "Wii",
+                    "sales": "10.12"
+                },
+                {
+                    "name": "Just Dance 2",
+                    "platform": "Wii",
+                    "sales": "9.44"
+                },
+                {
+                    "name": "Wii Party",
+                    "platform": "Wii",
+                    "sales": "8.38"
+                },
+                {
+                    "name": "Mario Party 8",
+                    "platform": "Wii",
+                    "sales": "8.27"
+                },
+                {
+                    "name": "Mario & Sonic at the Olympic Games",
+                    "platform": "Wii",
+                    "sales": "7.99"
+                },
+                {
+                    "name": "Super Mario Galaxy 2",
+                    "platform": "Wii",
+                    "sales": "7.51"
+                }
+            ]
+        },
+        {
+            "name": "NES",
+            "children": [{
+                    "name": "Super Mario Bros.",
+                    "platform": "NES",
+                    "sales": "40.24"
+                },
+                {
+                    "name": "Duck Hunt",
+                    "platform": "NES",
+                    "sales": "28.31"
+                },
+                {
+                    "name": "Super Mario Bros. 3",
+                    "platform": "NES",
+                    "sales": "17.28"
+                },
+                {
+                    "name": "Super Mario Bros. 2",
+                    "platform": "NES",
+                    "sales": "7.46"
+                }
+            ]
+        },
+        {
+            "name": "GB",
+            "children": [{
+                    "name": "Pokemon Red/Pokemon Blue",
+                    "platform": "GB",
+                    "sales": "31.37"
+                },
+                {
+                    "name": "Tetris",
+                    "platform": "GB",
+                    "sales": "30.26"
+                },
+                {
+                    "name": "Pokemon Gold/Pokemon Silver",
+                    "platform": "GB",
+                    "sales": "23.1"
+                },
+                {
+                    "name": "Super Mario Land",
+                    "platform": "GB",
+                    "sales": "18.14"
+                },
+                {
+                    "name": "Pokémon Yellow: Special Pikachu Edition",
+                    "platform": "GB",
+                    "sales": "14.64"
+                },
+                {
+                    "name": "Super Mario Land 2: 6 Golden Coins",
+                    "platform": "GB",
+                    "sales": "11.18"
+                }
+            ]
+        },
+        {
+            "name": "DS",
+            "children": [{
+                    "name": "New Super Mario Bros.",
+                    "platform": "DS",
+                    "sales": "29.8"
+                },
+                {
+                    "name": "Nintendogs",
+                    "platform": "DS",
+                    "sales": "24.67"
+                },
+                {
+                    "name": "Mario Kart DS",
+                    "platform": "DS",
+                    "sales": "23.21"
+                },
+                {
+                    "name": "Brain Age: Train Your Brain in Minutes a Day",
+                    "platform": "DS",
+                    "sales": "20.15"
+                },
+                {
+                    "name": "Pokemon Diamond/Pokemon Pearl",
+                    "platform": "DS",
+                    "sales": "18.25"
+                },
+                {
+                    "name": "Brain Age 2: More Training in Minutes a Day",
+                    "platform": "DS",
+                    "sales": "15.29"
+                },
+                {
+                    "name": "Pokemon Black/Pokemon White",
+                    "platform": "DS",
+                    "sales": "15.14"
+                },
+                {
+                    "name": "Animal Crossing: Wild World",
+                    "platform": "DS",
+                    "sales": "12.13"
+                },
+                {
+                    "name": "Pokemon HeartGold/Pokemon SoulSilver",
+                    "platform": "DS",
+                    "sales": "11.77"
+                },
+                {
+                    "name": "Super Mario 64",
+                    "platform": "DS",
+                    "sales": "10.3"
+                },
+                {
+                    "name": "Mario Party DS",
+                    "platform": "DS",
+                    "sales": "8.91"
+                },
+                {
+                    "name": "Pokemon Black 2/Pokemon White 2",
+                    "platform": "DS",
+                    "sales": "8.07"
+                },
+                {
+                    "name": "Pokémon Platinum Version",
+                    "platform": "DS",
+                    "sales": "7.72"
+                }
+            ]
+        },
+        {
+            "name": "X360",
+            "children": [{
+                    "name": "Kinect Adventures!",
+                    "platform": "X360",
+                    "sales": "21.81"
+                },
+                {
+                    "name": "Grand Theft Auto V",
+                    "platform": "X360",
+                    "sales": "16.27"
+                },
+                {
+                    "name": "Call of Duty: Modern Warfare 3",
+                    "platform": "X360",
+                    "sales": "14.73"
+                },
+                {
+                    "name": "Call of Duty: Black Ops",
+                    "platform": "X360",
+                    "sales": "14.61"
+                },
+                {
+                    "name": "Call of Duty: Black Ops II",
+                    "platform": "X360",
+                    "sales": "13.67"
+                },
+                {
+                    "name": "Call of Duty: Modern Warfare 2",
+                    "platform": "X360",
+                    "sales": "13.47"
+                },
+                {
+                    "name": "Halo 3",
+                    "platform": "X360",
+                    "sales": "12.12"
+                },
+                {
+                    "name": "Grand Theft Auto IV",
+                    "platform": "X360",
+                    "sales": "11.01"
+                },
+                {
+                    "name": "Call of Duty: Ghosts",
+                    "platform": "X360",
+                    "sales": "10.25"
+                },
+                {
+                    "name": "Halo: Reach",
+                    "platform": "X360",
+                    "sales": "9.86"
+                },
+                {
+                    "name": "Halo 4",
+                    "platform": "X360",
+                    "sales": "9.71"
+                },
+                {
+                    "name": "Call of Duty 4: Modern Warfare",
+                    "platform": "X360",
+                    "sales": "9.31"
+                },
+                {
+                    "name": "Minecraft",
+                    "platform": "X360",
+                    "sales": "9.18"
+                },
+                {
+                    "name": "The Elder Scrolls V: Skyrim",
+                    "platform": "X360",
+                    "sales": "8.79"
+                }
+            ]
+        },
+        {
+            "name": "PS3",
+            "children": [{
+                    "name": "Grand Theft Auto V",
+                    "platform": "PS3",
+                    "sales": "21.04"
+                },
+                {
+                    "name": "Call of Duty: Black Ops II",
+                    "platform": "PS3",
+                    "sales": "13.79"
+                },
+                {
+                    "name": "Call of Duty: Modern Warfare 3",
+                    "platform": "PS3",
+                    "sales": "13.32"
+                },
+                {
+                    "name": "Call of Duty: Black Ops",
+                    "platform": "PS3",
+                    "sales": "12.63"
+                },
+                {
+                    "name": "Gran Turismo 5",
+                    "platform": "PS3",
+                    "sales": "10.7"
+                },
+                {
+                    "name": "Call of Duty: Modern Warfare 2",
+                    "platform": "PS3",
+                    "sales": "10.6"
+                },
+                {
+                    "name": "Grand Theft Auto IV",
+                    "platform": "PS3",
+                    "sales": "10.5"
+                },
+                {
+                    "name": "Call of Duty: Ghosts",
+                    "platform": "PS3",
+                    "sales": "9.36"
+                },
+                {
+                    "name": "FIFA Soccer 13",
+                    "platform": "PS3",
+                    "sales": "8.16"
+                }
+            ]
+        },
+        {
+            "name": "PS2",
+            "children": [{
+                    "name": "Grand Theft Auto: San Andreas",
+                    "platform": "PS2",
+                    "sales": "20.81"
+                },
+                {
+                    "name": "Grand Theft Auto: Vice City",
+                    "platform": "PS2",
+                    "sales": "16.15"
+                },
+                {
+                    "name": "Gran Turismo 3: A-Spec",
+                    "platform": "PS2",
+                    "sales": "14.98"
+                },
+                {
+                    "name": "Grand Theft Auto III",
+                    "platform": "PS2",
+                    "sales": "13.1"
+                },
+                {
+                    "name": "Gran Turismo 4",
+                    "platform": "PS2",
+                    "sales": "11.66"
+                },
+                {
+                    "name": "Final Fantasy X",
+                    "platform": "PS2",
+                    "sales": "8.05"
+                }
+            ]
+        },
+        {
+            "name": "SNES",
+            "children": [{
+                    "name": "Super Mario World",
+                    "platform": "SNES",
+                    "sales": "20.61"
+                },
+                {
+                    "name": "Super Mario All-Stars",
+                    "platform": "SNES",
+                    "sales": "10.55"
+                },
+                {
+                    "name": "Donkey Kong Country",
+                    "platform": "SNES",
+                    "sales": "9.3"
+                },
+                {
+                    "name": "Super Mario Kart",
+                    "platform": "SNES",
+                    "sales": "8.76"
+                }
+            ]
+        },
+        {
+            "name": "GBA",
+            "children": [{
+                    "name": "Pokemon Ruby/Pokemon Sapphire",
+                    "platform": "GBA",
+                    "sales": "15.85"
+                },
+                {
+                    "name": "Pokemon FireRed/Pokemon LeafGreen",
+                    "platform": "GBA",
+                    "sales": "10.49"
+                }
+            ]
+        },
+        {
+            "name": "PS4",
+            "children": [{
+                    "name": "Call of Duty: Black Ops 3",
+                    "platform": "PS4",
+                    "sales": "14.63"
+                },
+                {
+                    "name": "Grand Theft Auto V",
+                    "platform": "PS4",
+                    "sales": "12.61"
+                },
+                {
+                    "name": "FIFA 16",
+                    "platform": "PS4",
+                    "sales": "8.57"
+                },
+                {
+                    "name": "Star Wars Battlefront (2015)",
+                    "platform": "PS4",
+                    "sales": "7.98"
+                },
+                {
+                    "name": "Call of Duty: Advanced Warfare",
+                    "platform": "PS4",
+                    "sales": "7.66"
+                },
+                {
+                    "name": "FIFA 17",
+                    "platform": "PS4",
+                    "sales": "7.59"
+                }
+            ]
+        },
+        {
+            "name": "3DS",
+            "children": [{
+                    "name": "Pokemon X/Pokemon Y",
+                    "platform": "3DS",
+                    "sales": "14.6"
+                },
+                {
+                    "name": "Mario Kart 7",
+                    "platform": "3DS",
+                    "sales": "12.66"
+                },
+                {
+                    "name": "Pokemon Omega Ruby/Pokemon Alpha Sapphire",
+                    "platform": "3DS",
+                    "sales": "11.68"
+                },
+                {
+                    "name": "Super Mario 3D Land",
+                    "platform": "3DS",
+                    "sales": "10.81"
+                },
+                {
+                    "name": "New Super Mario Bros. 2",
+                    "platform": "3DS",
+                    "sales": "9.9"
+                },
+                {
+                    "name": "Animal Crossing: New Leaf",
+                    "platform": "3DS",
+                    "sales": "9.16"
+                },
+                {
+                    "name": "Super Smash Bros. for Wii U and 3DS",
+                    "platform": "3DS",
+                    "sales": "7.55"
+                }
+            ]
+        },
+        {
+            "name": "N64",
+            "children": [{
+                    "name": "Super Mario 64",
+                    "platform": "N64",
+                    "sales": "11.89"
+                },
+                {
+                    "name": "Mario Kart 64",
+                    "platform": "N64",
+                    "sales": "9.87"
+                },
+                {
+                    "name": "GoldenEye 007",
+                    "platform": "N64",
+                    "sales": "8.09"
+                },
+                {
+                    "name": "The Legend of Zelda: Ocarina of Time",
+                    "platform": "N64",
+                    "sales": "7.6"
+                }
+            ]
+        },
+        {
+            "name": "PS",
+            "children": [{
+                    "name": "Gran Turismo",
+                    "platform": "PS",
+                    "sales": "10.95"
+                },
+                {
+                    "name": "Final Fantasy VII",
+                    "platform": "PS",
+                    "sales": "9.72"
+                },
+                {
+                    "name": "Gran Turismo 2",
+                    "platform": "PS",
+                    "sales": "9.49"
+                },
+                {
+                    "name": "Final Fantasy VIII",
+                    "platform": "PS",
+                    "sales": "7.86"
+                },
+                {
+                    "name": "Crash Bandicoot 2: Cortex Strikes Back",
+                    "platform": "PS",
+                    "sales": "7.58"
+                }
+            ]
+        },
+        {
+            "name": "XB",
+            "children": [{
+                "name": "Halo 2",
+                "platform": "XB",
+                "sales": "8.49"
+            }]
+        },
+        {
+            "name": "PC",
+            "children": [{
+                "name": "The Sims 3",
+                "platform": "PC",
+                "sales": "8.01"
+            }]
+        },
+        {
+            "name": "PSP",
+            "children": [{
+                "name": "Grand Theft Auto: Liberty City Stories",
+                "platform": "PSP",
+                "sales": "7.69"
+            }]
+        },
+        {
+            "name": "XOne",
+            "children": [{
+                "name": "Call of Duty: Black Ops 3",
+                "platform": "XOne",
+                "sales": "7.39"
+            }]
+        }
     ]
-  },{
-    "name": "DS",
-    "children": [
-      {
-        "name":"New Super Mario Bros",
-        "size": "29.8"
-      },
-      {
-        "name":"Nintendogs",
-        "size": "24.67"
-      },
-      {
-        "name":"Mario Kart DS",
-        "size": "23.21"
-      },
-      {
-        "name":"Brain Age: Train Your Brain in Minutes a Day",
-        "size": "20.15"
-      }
-    ]
-  }
-  ]
 }

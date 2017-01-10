@@ -123,11 +123,11 @@ var FCC_Global =
 
 	var _scatterPlotTests2 = _interopRequireDefault(_scatterPlotTests);
 
-	var _treeMapTests = __webpack_require__(56);
+	var _treeMapTests = __webpack_require__(55);
 
 	var _treeMapTests2 = _interopRequireDefault(_treeMapTests);
 
-	var _quoteMachineTests = __webpack_require__(55);
+	var _quoteMachineTests = __webpack_require__(56);
 
 	var _quoteMachineTests2 = _interopRequireDefault(_quoteMachineTests);
 
@@ -20926,126 +20926,6 @@ var FCC_Global =
 
 /***/ },
 /* 55 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.default = createRandomQuoteMachineTests;
-	function createRandomQuoteMachineTests() {
-	    describe("Random Quote Machine tests", function () {
-
-	        var requestTimeout = 3000;
-
-	        function testHorizontallyCentered(elName) {
-	            var centeredElement = document.getElementById(elName);
-	            console.log(centeredElement);
-	            var actualSideGap = centeredElement.offsetLeft;
-	            var centeredElementWidth = centeredElement.clientWidth;
-	            var gapExpectedWidth = (window.innerWidth - centeredElementWidth) / 2;
-	            var delta = gapExpectedWidth - actualSideGap;
-	            console.log(gapExpectedWidth, actualSideGap, delta);
-	            return delta < 3 && delta > -3;
-	        }
-
-	        beforeEach(function () {});
-
-	        after(function () {});
-
-	        describe("#Content", function () {
-	            it('1. I can see a wrapper element with a corresponding id="quote-box".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("quote-box"));
-	            });
-
-	            it('2. Within #quote-box, I can see an element with corresponding id="text".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("text"), '#text is not defined ');
-	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #text').length, 1, '#text is not a child of #quote-box ');
-	            });
-
-	            it('3. Within #quote-box, I can see an element with corresponding id="author".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("author"), '#author is not defined ');
-	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #author').length, 1, '#author is not a child of #quote-box ');
-	            });
-
-	            it('4. Within #quote-box, I can see a clickable element with corresponding id="new-quote".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("new-quote"), '#new-quote is not defined ');
-	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #new-quote').length, 1, '#new-quote button is not a child of #quote-box ');
-	            });
-
-	            it('5. Within #quote-box, I can see a "tweet" button with corresponding id="tweet-quote".', function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("tweet-quote"));
-	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #tweet-quote').length, 1, '#tweet-quote button is not a child of #quote-box ');
-	            });
-
-	            it('6. On first load, my quote machine displays a random quote in the element with id="text".', function () {
-	                this.timeout(requestTimeout + 1000);
-	                return new Promise(function (resolve, reject) {
-	                    setTimeout(function (_) {
-	                        var text = document.getElementById("text");
-	                        if (text.innerText.length > 0) resolve();else reject("There is no initial quote displayed ");
-	                    }, requestTimeout);
-	                });
-	            });
-
-	            it('7. On first load, my quote machine displays the random quote\'s author in the element with id="author".', function () {
-	                this.timeout(requestTimeout + 1000);
-	                return new Promise(function (resolve, reject) {
-	                    setTimeout(function (_) {
-	                        var author = document.getElementById("author");
-	                        if (author.innerText.length > 0) resolve();else reject("There is no initial author displayed ");
-	                    }, requestTimeout);
-	                });
-	            });
-
-	            it("8. When the #new-quote button is clicked, my quote machine should fetch a new quote and display it in the #text element.", function (done) {
-	                this.timeout(requestTimeout + 1000);
-	                var prevText = document.getElementById("text").innerText;
-	                document.getElementById("new-quote").click();
-	                setTimeout(function (_) {
-	                    var newText = document.getElementById("text").innerText;
-	                    if (newText === prevText) {
-	                        done("The text hasn't changed after button click ");
-	                    } else {
-	                        done();
-	                    }
-	                }, requestTimeout);
-	            });
-
-	            it("9. My quote machine should fetch the new quote\'s author when the #new-quote button is clicked and display it in the #author element.", function (done) {
-	                this.timeout(requestTimeout + 1000);
-	                var prevAuth = document.getElementById("author").innerText;
-	                document.getElementById("new-quote").click();
-	                setTimeout(function (_) {
-	                    var newAuth = document.getElementById("author").innerText;
-	                    if (newAuth === prevAuth) {
-	                        done("The text hasn't changed after button click ");
-	                    } else {
-	                        done();
-	                    }
-	                }, requestTimeout);
-	            });
-
-	            it('10. I can tweet the current quote by clicking on the #tweet-quote button. This button should use the "twitter.com/intent/tweet" path to tweet the current quote.', function () {
-	                this.timeout(requestTimeout + 1000);
-	                FCC_Global.assert.isOk(document.getElementById("tweet-quote").hasAttribute('href'), '#tweet-quote button must have an href attribute ');
-	                var href = document.getElementById("tweet-quote").href;
-	                FCC_Global.assert.include(href.toLowerCase(), 'twitter.com/intent/tweet', 'The #tweet-quote button does not utilize the correct twitter intent ');
-	            });
-	        }); // END #Content
-
-	        describe("#Layout", function () {
-
-	            it('1. The #quote-box wrapper element should be horizontally centered.', function () {
-	                FCC_Global.assert.isOk(testHorizontallyCentered('quote-box'));
-	            });
-	        }); // END #Layout
-	    }); // END Random Quote Machine tests
-	} // END createRandomQuoteMachineTests()
-
-/***/ },
-/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21071,7 +20951,7 @@ var FCC_Global =
 	  describe('#TreeMapTests', function () {
 
 	    describe('#Content', function () {
-	      it('1. My tree map should have a title with a corresponding id="title"', function () {
+	      it('1. My tre map should have a title with a corresponding id="title"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('title'), 'Could not find element with id="title" ');
 	      });
 	      it('2. My tree map should have a description with a corresponding id="description"', function () {
@@ -21189,6 +21069,126 @@ var FCC_Global =
 	    });
 	  });
 	}
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.default = createRandomQuoteMachineTests;
+	function createRandomQuoteMachineTests() {
+	    describe("Random Quote Machine tests", function () {
+
+	        var requestTimeout = 3000;
+
+	        function testHorizontallyCentered(elName) {
+	            var centeredElement = document.getElementById(elName);
+	            console.log(centeredElement);
+	            var actualSideGap = centeredElement.offsetLeft;
+	            var centeredElementWidth = centeredElement.clientWidth;
+	            var gapExpectedWidth = (window.innerWidth - centeredElementWidth) / 2;
+	            var delta = gapExpectedWidth - actualSideGap;
+	            console.log(gapExpectedWidth, actualSideGap, delta);
+	            return delta < 3 && delta > -3;
+	        }
+
+	        beforeEach(function () {});
+
+	        after(function () {});
+
+	        describe("#Content", function () {
+	            it('1. I can see a wrapper element with a corresponding id="quote-box".', function () {
+	                FCC_Global.assert.isNotNull(document.getElementById("quote-box"));
+	            });
+
+	            it('2. Within #quote-box, I can see an element with corresponding id="text".', function () {
+	                FCC_Global.assert.isNotNull(document.getElementById("text"), '#text is not defined ');
+	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #text').length, 1, '#text is not a child of #quote-box ');
+	            });
+
+	            it('3. Within #quote-box, I can see an element with corresponding id="author".', function () {
+	                FCC_Global.assert.isNotNull(document.getElementById("author"), '#author is not defined ');
+	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #author').length, 1, '#author is not a child of #quote-box ');
+	            });
+
+	            it('4. Within #quote-box, I can see a clickable element with corresponding id="new-quote".', function () {
+	                FCC_Global.assert.isNotNull(document.getElementById("new-quote"), '#new-quote is not defined ');
+	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #new-quote').length, 1, '#new-quote button is not a child of #quote-box ');
+	            });
+
+	            it('5. Within #quote-box, I can see a "tweet" button with corresponding id="tweet-quote".', function () {
+	                FCC_Global.assert.isNotNull(document.getElementById("tweet-quote"));
+	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #tweet-quote').length, 1, '#tweet-quote button is not a child of #quote-box ');
+	            });
+
+	            it('6. On first load, my quote machine displays a random quote in the element with id="text".', function () {
+	                this.timeout(requestTimeout + 1000);
+	                return new Promise(function (resolve, reject) {
+	                    setTimeout(function (_) {
+	                        var text = document.getElementById("text");
+	                        if (text.innerText.length > 0) resolve();else reject("There is no initial quote displayed ");
+	                    }, requestTimeout);
+	                });
+	            });
+
+	            it('7. On first load, my quote machine displays the random quote\'s author in the element with id="author".', function () {
+	                this.timeout(requestTimeout + 1000);
+	                return new Promise(function (resolve, reject) {
+	                    setTimeout(function (_) {
+	                        var author = document.getElementById("author");
+	                        if (author.innerText.length > 0) resolve();else reject("There is no initial author displayed ");
+	                    }, requestTimeout);
+	                });
+	            });
+
+	            it("8. When the #new-quote button is clicked, my quote machine should fetch a new quote and display it in the #text element.", function (done) {
+	                this.timeout(requestTimeout + 1000);
+	                var prevText = document.getElementById("text").innerText;
+	                document.getElementById("new-quote").click();
+	                setTimeout(function (_) {
+	                    var newText = document.getElementById("text").innerText;
+	                    if (newText === prevText) {
+	                        done("The text hasn't changed after button click ");
+	                    } else {
+	                        done();
+	                    }
+	                }, requestTimeout);
+	            });
+
+	            it("9. My quote machine should fetch the new quote\'s author when the #new-quote button is clicked and display it in the #author element.", function (done) {
+	                this.timeout(requestTimeout + 1000);
+	                var prevAuth = document.getElementById("author").innerText;
+	                document.getElementById("new-quote").click();
+	                setTimeout(function (_) {
+	                    var newAuth = document.getElementById("author").innerText;
+	                    if (newAuth === prevAuth) {
+	                        done("The text hasn't changed after button click ");
+	                    } else {
+	                        done();
+	                    }
+	                }, requestTimeout);
+	            });
+
+	            it('10. I can tweet the current quote by clicking on the #tweet-quote button. This button should use the "twitter.com/intent/tweet" path to tweet the current quote.', function () {
+	                this.timeout(requestTimeout + 1000);
+	                FCC_Global.assert.isOk(document.getElementById("tweet-quote").hasAttribute('href'), '#tweet-quote button must have an href attribute ');
+	                var href = document.getElementById("tweet-quote").href;
+	                FCC_Global.assert.include(href.toLowerCase(), 'twitter.com/intent/tweet', 'The #tweet-quote button does not utilize the correct twitter intent ');
+	            });
+	        }); // END #Content
+
+	        describe("#Layout", function () {
+
+	            it('1. The #quote-box wrapper element should be horizontally centered.', function () {
+	                FCC_Global.assert.isOk(testHorizontallyCentered('quote-box'));
+	            });
+	        }); // END #Layout
+	    }); // END Random Quote Machine tests
+	} // END createRandomQuoteMachineTests()
 
 /***/ }
 /******/ ]);
