@@ -34,41 +34,12 @@ var treemap = d3.treemap()
     .round(true)
     .paddingInner(1);
 
-var FILE_PATH = "data/Video_Games_Sales_small.csv"
-//var FILE_PATH = "data/Video_Games_Sales_as_at_22_Dec_2016.csv"
-//var FILE_PATH = "data/Video_Games_Sales_Top_1000.csv"
-//var FILE_PATH = "data/Video_Games_Sales_Top_200.csv"
-//var FILE_PATH = "data/Video_Games_Sales_2014.csv"
-d3.csv(FILE_PATH, function(error,data){
+var FILE_PATH = "data/video_game_sales.json"
+d3.json(FILE_PATH, function(error,data){
   
   if (error) throw error;
-  var parsedData = {
-    name:"Video Game Data",
-    children:[]
-  }
-  var platforms = {}
-  for(var i = 0; i < data.length; i++){
-    d = data[i];
-    var child = {
-      name:d.Name,
-      platform:d.Platform,
-      sales:d.Global_Sales
-    }
-    if(platforms[d.Platform]){  //check if platform is already in list of platforms
-      platforms[d.Platform].children.push(child);
-      platforms[d.Platform].name = d.Platform;
-    }else{
-      platforms[d.Platform] = {
-        name:d.Platform,
-        children:[child]
-      }
-    }
-    
-  }
   
-  parsedData.children = Object.values(platforms);
-  console.log(parsedData);
-  var root = d3.hierarchy(parsedData)
+  var root = d3.hierarchy(data)
       .eachBefore(function(d) {
         //console.log("d",d); 
         d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name; 
