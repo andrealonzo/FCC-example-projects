@@ -78,7 +78,6 @@ d3.json(FILE_PATH, function(error,data){
         .style("top", (d3.event.pageY - 28) + "px"); 
       }) 
       
-      
       .on("mouseout", function(d) { 
         tooltip.style("opacity", 0); 
       })
