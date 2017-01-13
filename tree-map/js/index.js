@@ -93,7 +93,7 @@ d3.json(FILE_PATH, function(error,data){
   var legendRectSize = 15;
   var legendSpacing = 60;
   //calculates how many legend elements can fit in one row
-  var legendElemsPerRow = Math.floor(legendWidth/(legendRectSize+legendSpacing));
+  var legendElemsPerRow = Math.floor(legendWidth/legendSpacing);
   
   var legendElem = legend
     .append("g")
