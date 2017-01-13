@@ -2,17 +2,6 @@ const project_name="tree-map"
 
 // Define body
 var body = d3.select("body");
-
-// Add title and description
-var heading = body.append("heading");
-
-heading.append("h1")
-  .attr('id', 'title')
-  .text("Video Game Sales in 2014");
-
-heading.append("h3")
-  .attr('id', 'description')
-  .text("Data from x")
   
 // Define the div for the tooltip
 var tooltip = body.append("div")
