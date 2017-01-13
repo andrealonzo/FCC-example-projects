@@ -56,9 +56,12 @@ d3.json(FILE_PATH, function(error,data){
       })
       .on("mouseover", function(d) {      
         tooltip.style("opacity", .9); 
-        tooltip.html(function() {
-          return d.data.name + d.data.platform + d.data.sales;
-        })
+        tooltip.html(
+          'Name: ' + d.data.name + 
+          '<br>Platform: ' + d.data.platform + 
+          '<br>Sales: ' + d.data.sales
+        )
+        .attr("data-sales", d.data.sales)
         .style("left", (d3.event.pageX) + "px") 
         .style("top", (d3.event.pageY - 28) + "px"); 
       }) 
@@ -75,10 +78,6 @@ d3.json(FILE_PATH, function(error,data){
       .attr("x", 4)
       .attr("y", function(d, i) { return 13 + i * 10; })
       .text(function(d) { return d; });
-
-  cell.append("title")
-      .text(function(d) { return d.data.id + "\n" + format(d.value); });
-
 });
 
 // d3.json("data/video_game_sales.json", function(error, data) {

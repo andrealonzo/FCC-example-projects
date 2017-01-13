@@ -40039,150 +40039,65 @@ var FCC_Global =
 	          FCC_Global.assert.isNotNull(tile.getAttribute("data-sales"), "Could not find property 'data-sales' in tile");
 	        }
 	      });
-
-	      it('7. The area of each tile should correspond to the sales amount.', function () {
-	        var tiles = document.querySelectorAll('rect.tile');
-
-	        var firstArea = tiles[0].width.baseVal.value * tiles[0].height.baseVal.value;
-
-	        // get the ratio of the first data point to the height of the first bar
-	        var firstRatio = tiles[0].getAttribute('data-sales') / firstArea;
-
-	        //console.log('first ratio: ', firstRatio)
-
-	        // iterate through each bar and make sure that its height is consistent with its corresponding data point using the first ratio
-	        // this test completely validates the bars, but isn\'t very useful to the user, so data-date and data-gdp tests were added for clarity
-	        for (var i = 0; i < tiles.length; i++) {
-	          var dataValue = tiles[i].getAttribute('data-sales');
-	          var tileArea = tiles[i].width.baseVal.value * tiles[i].height.baseVal.value;
-	          var ratio = dataValue / tileArea;
-	          var delta = firstRatio / 4; // allow 10% error
-
-	          //console.log('ratio: ', ratio);
-	          //console.log('tiles[i]: ', tiles[i]);
-	          FCC_Global.assert.approximately(firstRatio, ratio, delta, 'The areas of the tiles should correspond to the data values');
-	        }
-	      });
-	      //  it('7. The area of each tile should correspond to the sales amount.', function(){
-	      //   const tilesCollection = document.querySelectorAll('.tile');
-	      //   FCC_Global.assert.isAbove(tilesCollection.length, 0, "Could not find any elements with a class=\"tile\"");
-	      //   
-	      //   const tiles = [].slice.call(tilesCollection);
-	      //   const sortedTiles = tiles.sort(function(tile1,tile2){
-	      //     var tile1Area = tile1.width.baseVal.value * tile1.height.baseVal.value;
-	      //     var tile2Area = tile2.width.baseVal.value * tile2.height.baseVal.value;
-	      //     return tile1Area - tile2Area;
-	      //   })
-	      // 
-	      // //  console.log(sortedTiles);
-	      //   for(var i=0; i<sortedTiles.length; i++){
-	      //     var tile = sortedTiles[i];
-	      //     console.log("tile 1:", sortedTiles[i])
-	      //     console.log("tile 1 area: ",sortedTiles[i].width.baseVal.value * sortedTiles[i].height.baseVal.value)
-	      //     console.log("tile 2:", sortedTiles[i+1])
-	      //     console.log("tile 2 area: ", sortedTiles[i+1].width.baseVal.value * sortedTiles[i+1].height.baseVal.value)
-	      //     FCC_Global.assert.isAtMost(+sortedTiles[i].getAttribute("data-sales"), +sortedTiles[i + 1].getAttribute("data-sales"), "data sales don't match up")
-	      //     //console.log(tileArea);
-	      //   //  FCC_Global.assert.isNotNull(sales, "Could not find property 'data-sales' in tile")
-	      //   
-	      //   }
-
-	      //convert to array    
-	      // const cells = [].slice.call(cellsCollection);
-	      // const sortedCells = cells.sort(function(a, b) {
-	      //     return a.getAttribute("data-month") - b.getAttribute("data-month");
-	      // })
-	      // 
-	      // //check to see if the y locations of the new sorted array are in ascending order
-	      // for (var i = 0; i < sortedCells.length - 1; ++i) {
-	      //     FCC_Global.assert.isAtMost(+sortedCells[i].getAttribute("y"), +sortedCells[i + 1].getAttribute("y"), "month values don't line up with y locations ")
-	      // }
-	      // //Get all tiles
-	      // //calculate area of each tile
-	      // //sort cells by area
-	      // //see if the data-sales of each cell are sorted as well
-	      //    })
-	      it('8.  Check if each platform grouping area corresponds to the cumulative data-sales of each video game', function () {
-	        //1.  Get all tiles and group them by data-platform
-	        //2.  calculate the total area of each data-platform by adding up the individual tiles in that grouping
-	        //3.  
+	      it('6.  The area of each tile should correspond to the sales amount', function () {
 	        var tilesCollection = document.querySelectorAll('.tile');
 	        FCC_Global.assert.isAbove(tilesCollection.length, 0, "Could not find any elements with a class=\"tile\"");
 
 	        var tiles = [].slice.call(tilesCollection);
-	        var sortedTiles = tiles.sort(function (tile1, tile2) {
-	          var tile1Platform = tile1.getAttribute('data-platform');
-	          var tile2Platform = tile2.getAttribute('data-platform');
-	          if (tile1Platform < tile2Platform) return -1;
-	          if (tile1Platform > tile2Platform) return 1;
-	          return 0;
+
+	        // group tiles by platform
+	        var tilesByPlatform = {};
+	        for (var j = 1; j < tiles.length; j++) {
+	          var platform = tiles[j].getAttribute('data-platform');
+	          if (!tilesByPlatform[platform]) {
+	            tilesByPlatform[platform] = [];
+	          }
+	          tilesByPlatform[platform].push(tiles[j]);
+	        }
+
+	        tilesByPlatform = Object.values(tilesByPlatform);
+
+	        // sort each platform array by sales
+	        tilesByPlatform.forEach(function (platform) {
+	          platform.sort(function (tile1, tile2) {
+	            var tile1Sales = tile1.getAttribute('data-sales');
+	            var tile2Sales = tile2.getAttribute('data-sales');
+	            return tile1Sales - tile2Sales;
+	          });
 	        });
 
-	        var tilesByPlatform = [];
+	        // outer loop loops through array platform arrays
+	        for (var k = 0; k < tilesByPlatform.length; k++) {
+	          if (tilesByPlatform[k].length > 1) {
+	            // loops through each item in playfrom array
+	            for (var i = 0; i < tilesByPlatform[k].length - 1; i++) {
+	              var firstTile = +tilesByPlatform[k][i].getAttribute("data-sales");
+	              var secondTile = +tilesByPlatform[k][i + 1].getAttribute("data-sales");
 
-	        for (var j = 1; j < sortedTiles.length; j++) {
-	          var gamesInOnePlatform = [];
-
-	          gamesInOnePlatform.push(sortedTiles[j - 1]);
-
-	          // if the current game has the same platform as the last, keep building this arr
-	          if (sortedTiles[j].getAttribute('data-platform') === sortedTiles[j - 1].getAttribute('data-platform')) {
-	            gamesInOnePlatform.push(sortedTiles[j]);
-	          } else {
-	            tilesByPlatform.push(gamesInOnePlatform);
-	            gamesInOnePlatform = [];
-	            gamesInOnePlatform.push(sortedTiles[j]);
+	              FCC_Global.assert.isAtMost(firstTile, secondTile, "data sales don't match up");
+	            }
 	          }
 	        }
-
-	        console.log('nonsense: ', tilesByPlatform);
-
-	        for (var i = 0; i < sortedTiles.length; i++) {
-	          var tile = sortedTiles[i];
-	          console.log("tile 1:", sortedTiles[i]);
-	          console.log("tile 1 area: ", sortedTiles[i].width.baseVal.value * sortedTiles[i].height.baseVal.value);
-	          console.log("tile 2:", sortedTiles[i + 1]);
-	          console.log("tile 2 area: ", sortedTiles[i + 1].width.baseVal.value * sortedTiles[i + 1].height.baseVal.value);
-	          FCC_Global.assert.isAtMost(+sortedTiles[i].getAttribute("data-sales"), +sortedTiles[i + 1].getAttribute("data-sales"), "data sales don't match up");
-	          //console.log(tileArea);
-	          //  FCC_Global.assert.isNotNull(sales, "Could not find property 'data-sales' in tile")
-	        }
-
-	        console.log("sorted Tiles", sortedTiles);
-
-	        for (var i = 0; i < sortedTiles.length; i++) {
-	          var tile = sortedTiles[i];
-	          console.log("tile 1:", sortedTiles[i]);
-	          console.log("tile 1 area: ", sortedTiles[i].width.baseVal.value * sortedTiles[i].height.baseVal.value);
-	          console.log("tile 2:", sortedTiles[i + 1]);
-	          console.log("tile 2 area: ", sortedTiles[i + 1].width.baseVal.value * sortedTiles[i + 1].height.baseVal.value);
-	          FCC_Global.assert.isAtMost(+sortedTiles[i].getAttribute("data-sales"), +sortedTiles[i + 1].getAttribute("data-sales"), "data sales don't match up");
-	          //console.log(tileArea);
-	          //  FCC_Global.assert.isNotNull(sales, "Could not find property 'data-sales' in tile")
-	        }
-
-	        //convert to array    
-	        // const cells = [].slice.call(cellsCollection);
-	        // const sortedCells = cells.sort(function(a, b) {
-	        //     return a.getAttribute("data-month") - b.getAttribute("data-month");
-	        // })
-	        // 
-	        // //check to see if the y locations of the new sorted array are in ascending order
-	        // for (var i = 0; i < sortedCells.length - 1; ++i) {
-	        //     FCC_Global.assert.isAtMost(+sortedCells[i].getAttribute("y"), +sortedCells[i + 1].getAttribute("y"), "month values don't line up with y locations ")
-	        // }
-	        // //Get all tiles
-	        // //calculate area of each tile
-	        // //sort cells by area
-	        // //see if the data-sales of each cell are sorted as well
 	      });
 
-	      // 8.  Check if each platform grouping area corresponds to the cumulative data-sales of each video game (don't know how to check this)
-	      // 
-	      it('9. My tree map should have a legend with corresponding id="legend"', function () {
+	      it('7. My tree map should have a legend with corresponding id="legend"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
 	      });
-	      it('10.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
+	      it('8. There should be at least 4 different fill colors used for the legend', function () {
+	        var rects = document.querySelectorAll('#legend rect');
+	        var uniqueColors = [];
+
+	        for (var i = 0; i < rects.length; i++) {
+	          var rectColor = rects[i].style.fill || rects[i].getAttribute('fill');
+
+	          // if the current color isn't in the uniqueColors arr, push it 
+	          if (uniqueColors.indexOf(rectColor) === -1) {
+	            uniqueColors.push(rectColor);
+	          }
+	        }
+	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be at least four fill colors used for the legend ');
+	      });
+	      it('9.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 
 	        var firstRequestTimeout = 100;
 	        var secondRequestTimeout = 2000;
@@ -40219,6 +40134,17 @@ var FCC_Global =
 	        });
 	      });
 
+	      it('10. My tooltip should have a "data-sales" property that corresponds to the given sales of the active tile.', function () {
+	        var tooltip = document.getElementById('tooltip');
+	        FCC_Global.assert.isNotNull(tooltip.getAttribute("data-sales"), 'Could not find property "data-sales" in tooltip ');
+	        var tiles = (0, _jquery2.default)('.tile');
+	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
+
+	        var randomTiles = tiles[randomIndex];
+
+	        randomTiles.dispatchEvent(new MouseEvent('mouseover'));
+	        FCC_Global.assert.equal(tooltip.getAttribute('data-sales'), randomTiles.getAttribute('data-sales'), 'Tooltip\'s \"data-sales\" property should be equal to the active tiles\'s \"data-sales\" property');
+	      });
 	      // 5. Each cell will have the properties "data-name", "data-platform", "data-sales" containing their corresponding name, platform, and sales values
 
 	      // 7. The area of each cell should correspond to the sales amount. (get from bar chart)
