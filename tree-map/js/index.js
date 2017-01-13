@@ -18,21 +18,17 @@ var fader = function(color) { return d3.interpolateRgb(color, "#fff")(0.2); },
     format = d3.format(",d");
 
 var treemap = d3.treemap()
-    .tile(d3.treemapResquarify)
     .size([width, height])
-    .round(true)
     .paddingInner(1);
 
-var FILE_PATH = "data/video_game_sales.json"
+const FILE_PATH = "data/video_game_sales.json"
 d3.json(FILE_PATH, function(error,data){
   
   if (error) throw error;
   
   var root = d3.hierarchy(data)
       .eachBefore(function(d) {
-        //console.log("d",d); 
         d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name; 
-        //console.log("data id", d.data.id);
       })
       .sum(sumBySize)
       .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
@@ -72,13 +68,7 @@ d3.json(FILE_PATH, function(error,data){
       })
       .attr("fill", function(d) { return color(d.parent.data.id); });
 
-  cell.append("clipPath")
-      .attr("id", function(d) { return "clip-" + d.data.id; })
-    .append("use")
-      .attr("xlink:href", function(d) { return "#" + d.data.id; });
-
   cell.append("text")
-      .attr("clip-path", function(d) { return "url(#clip-" + d.data.id + ")"; })
     .selectAll("tspan")
       .data(function(d) { return d.data.name.split(/(?=[A-Z][^A-Z])/g); })
     .enter().append("tspan")
