@@ -69,7 +69,9 @@ d3.json(FILE_PATH, function(error,data){
       .on("mouseout", function(d) { 
         tooltip.style("opacity", 0); 
       })
-      .attr("fill", function(d) { return color(d.parent.data.id); });
+      .attr("fill", function(d) { 
+        return color(d.data.platform); 
+      });
 
   cell.append("text")
     .selectAll("tspan")
@@ -78,118 +80,43 @@ d3.json(FILE_PATH, function(error,data){
       .attr("x", 4)
       .attr("y", function(d, i) { return 13 + i * 10; })
        .text(function(d) { return d; });
-  // var legendRectSize = 18;
-  // var legendSpacing = 4;
-  // 
-  // var domain = ["Wii", "X360"];
-  // 
-  // //platforms
-  // var platforms = 
-  // console.log(root.descendants());
-  // 
-  // var legend = d3.select("#legend")
-  // 
-  // var legendElement = legend.selectAll("g")
-  //   .data(domain)
-  //   .enter().append("g")
-  //   .attr("transform", function(d, i) { 
-  //       var height = legendRectSize + legendSpacing;          
-  //       var offset =  0;     
-  //       var horz = i*100;                      
-  //       var vert = 0;   
-  //       console.log(d);
-  //       return 'translate(' + horz + ',' + vert + ')';        // NEW
-  //   })
-  //   
-  // legendElement.append("rect")                              
-  // .attr('width', "100")                          
-  // .attr('height', "100")                         
-  // .attr('fill', "purple")                                   
-  // .attr('stroke', "blue")
-  // 
-  // legendElement.append("text")      
-  // .attr('x', 10)              // NEW
-  // .attr('y', 10)              // NEW                        
-  // .text(function(d) { return d; });     
-      
-
-      
-    // legend.append("rect")
-    //     .attr("id", function(d) { return d.data.id; })
-    //     .attr("class", "tile")
-    //     .attr("width", function(d) { return d.x1 - d.x0; })
-    //     .attr("height", function(d) { return d.y1 - d.y0; })
-    //     .on("mouseover", function(d) {      
-    //       tooltip.style("opacity", .9); 
-    //       tooltip.html(
-    //         'Name: ' + d.data.name + 
-    //         '<br>Platform: ' + d.data.platform + 
-    //         '<br>Sales: ' + d.data.sales
-    //       )
-    //       // .attr("data-sales", d.data.sales)
-    //       //  .style("left", (d3.event.pageX) + "px") 
-    //       //  .style("top", (d3.event.pageY - 28) + "px"); 
-    //     }) 
-    //     
-    //     .attr("fill", function(d) { return color(d.parent.data.id); });
-      
-  // var legend = svg.selectAll('.legend')
-  //     .data(domain)
-  //     .enter()
-  //     .append('g')
-  //     .attr('class', 'legend')
-  //     .attr('transform', function(d, i) {
-  //       var height = 100 + 100;
-  //       var offset =  height * color.domain().length / 2;
-  //       var horz = -2 * 100;
-  //       var vert = i * height - offset;
-  //       return 'translate(' + horz + ',' + vert + ')';
-  //     });
+       
+       
+  var platforms = root.leaves().map(function(nodes){
+    return nodes.data.platform;
+  });
+  platforms = platforms.filter(function(platform, index, self){
+    return self.indexOf(platform)===index;    
+  })
+  var legend = d3.select("#legend")
+  var legendWidth = +legend.attr("width");
+  var legendRectSize = 15;
+  var legendSpacing = 60;
+  //calculates how many legend elements can fit in one row
+  var legendElemsPerRow = Math.floor(legendWidth/(legendRectSize+legendSpacing));
+  
+  var legendElem = legend
+    .append("g")
+    .attr("transform", "translate(0,10)")
+    .selectAll("g")
+    .data(platforms)
+    .enter().append("g")
+    .attr("transform", function(d, i) { 
+      return 'translate(' + ((i%legendElemsPerRow)*legendSpacing) + ',' + ((Math.floor(i/legendElemsPerRow))*legendRectSize) + ')';
+    })
+     
+  legendElem.append("rect")                              
+     .attr('width', "15")                          
+     .attr('height', "15")                         
+     .attr('fill', function(d){
+       return color(d);
+     })  
+     
+   legendElem.append("text")                              
+     .attr('x', legendRectSize + 3)                          
+     .attr('y',legendRectSize - 2)                       
+     .text(function(d) { return d; });  
 });
-
-// d3.json("data/video_game_sales.json", function(error, data) {
-//   if (error) throw error;
-// 
-//   var root = d3.hierarchy(data)
-//       .eachBefore(function(d) {
-//         console.log("d",d); 
-//         d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name; 
-//         console.log("data id", d.data.id);
-//       })
-//       .sum(sumBySize)
-//       .sort(function(a, b) { return b.height - a.height || b.value - a.value; });
-// 
-//   treemap(root);
-// 
-//   var cell = svg.selectAll("g")
-//     .data(root.leaves())
-//     .enter().append("g")
-//       .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
-// 
-//   cell.append("rect")
-//       .attr("id", function(d) { return d.data.id; })
-//       .attr("width", function(d) { return d.x1 - d.x0; })
-//       .attr("height", function(d) { return d.y1 - d.y0; })
-//       .attr("fill", function(d) { return color(d.parent.data.id); });
-// 
-//   cell.append("clipPath")
-//       .attr("id", function(d) { return "clip-" + d.data.id; })
-//     .append("use")
-//       .attr("xlink:href", function(d) { return "#" + d.data.id; });
-// 
-//   cell.append("text")
-//       .attr("clip-path", function(d) { return "url(#clip-" + d.data.id + ")"; })
-//     .selectAll("tspan")
-//       .data(function(d) { return d.data.name.split(/(?=[A-Z][^A-Z])/g); })
-//     .enter().append("tspan")
-//       .attr("x", 4)
-//       .attr("y", function(d, i) { return 13 + i * 10; })
-//       .text(function(d) { return d; });
-// 
-//   cell.append("title")
-//       .text(function(d) { return d.data.id + "\n" + format(d.value); });
-// 
-// });
 
 function sumBySize(d) {
   return d.sales;

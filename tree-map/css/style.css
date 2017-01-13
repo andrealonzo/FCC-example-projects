@@ -28,4 +28,7 @@ div.tooltip {
 
 #legend{
   font-size: 15px;
+  text-align: center;
+  display: block;
+  margin: auto;
 }
