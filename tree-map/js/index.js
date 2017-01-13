@@ -90,31 +90,35 @@ d3.json(FILE_PATH, function(error,data){
   })
   var legend = d3.select("#legend")
   var legendWidth = +legend.attr("width");
-  var legendRectSize = 15;
-  var legendSpacing = 60;
-  //calculates how many legend elements can fit in one row
-  var legendElemsPerRow = Math.floor(legendWidth/legendSpacing);
+  const LEGEND_OFFSET = 10;
+  const LEGEND_RECT_SIZE = 15;
+  const LEGEND_SPACING = 60;
+  const LEGEND_TEXT_X_OFFSET = 3;
+  const LEGEND_TEXT_Y_OFFSET = -2;
+  var legendElemsPerRow = Math.floor(legendWidth/LEGEND_SPACING);
   
   var legendElem = legend
     .append("g")
-    .attr("transform", "translate(0,10)")
+    .attr("transform", "translate(0," + LEGEND_OFFSET + ")")
     .selectAll("g")
     .data(platforms)
     .enter().append("g")
     .attr("transform", function(d, i) { 
-      return 'translate(' + ((i%legendElemsPerRow)*legendSpacing) + ',' + ((Math.floor(i/legendElemsPerRow))*legendRectSize) + ')';
+      return 'translate(' + 
+      ((i%legendElemsPerRow)*LEGEND_SPACING) + ',' + 
+      ((Math.floor(i/legendElemsPerRow))*LEGEND_RECT_SIZE) + ')';
     })
      
   legendElem.append("rect")                              
-     .attr('width', "15")                          
-     .attr('height', "15")                         
+     .attr('width', LEGEND_RECT_SIZE)                          
+     .attr('height', LEGEND_RECT_SIZE)                         
      .attr('fill', function(d){
        return color(d);
      })  
      
    legendElem.append("text")                              
-     .attr('x', legendRectSize + 3)                          
-     .attr('y',legendRectSize - 2)                       
+     .attr('x', LEGEND_RECT_SIZE + LEGEND_TEXT_X_OFFSET)                          
+     .attr('y', LEGEND_RECT_SIZE + LEGEND_TEXT_Y_OFFSET)                       
      .text(function(d) { return d; });  
 });
 
