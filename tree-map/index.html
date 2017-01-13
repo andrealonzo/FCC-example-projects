@@ -9,7 +9,25 @@
   <body>
     <h1 id='title'>Video Game Sales</h1>
     <div id='description'>The Top 100 Most Sold Video Games Grouped by Platform</div>
-    <svg width="960" height="570"></svg>
+    
+    <svg id='tree-map' width="960" height="570"></svg>
+    <svg id='legend'>
+      <g transform = "translate(0, 10)">
+        <g transform = "translate(0, 0)">
+          <rect width = "15" height = "15" fill = "rgb(76, 146, 195)"></rect>
+          <text x = "18" y="13">Wii</text>
+        </g>
+        <g transform = "translate(50, 0)">
+          <rect width = "15" height = "15" fill = "rgb(190, 210, 237)"></rect>
+          <text x = "18" y="13">DS</text>
+        </g>
+        <g transform = "translate(100, 0)">
+          <rect width = "15" height = "15" fill = "rgb(255, 153, 62)"></rect>
+          <text x = "18" y="13">X360</text>
+        </g>
+      <g>
+      
+    </svg>
   <!-- ...your external resources here... -->
 <script src='https://d3js.org/d3.v4.min.js'></script>
   <script src='js/bundle.js'></script>

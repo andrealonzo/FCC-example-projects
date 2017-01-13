@@ -9,7 +9,7 @@ var tooltip = body.append("div")
   .attr("id", "tooltip")
   .style("opacity", 0);
 
-var svg = d3.select("svg"),
+var svg = d3.select("#tree-map"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
@@ -77,7 +77,74 @@ d3.json(FILE_PATH, function(error,data){
     .enter().append("tspan")
       .attr("x", 4)
       .attr("y", function(d, i) { return 13 + i * 10; })
-      .text(function(d) { return d; });
+       .text(function(d) { return d; });
+  // var legendRectSize = 18;
+  // var legendSpacing = 4;
+  // 
+  // var domain = ["Wii", "X360"];
+  // 
+  // //platforms
+  // var platforms = 
+  // console.log(root.descendants());
+  // 
+  // var legend = d3.select("#legend")
+  // 
+  // var legendElement = legend.selectAll("g")
+  //   .data(domain)
+  //   .enter().append("g")
+  //   .attr("transform", function(d, i) { 
+  //       var height = legendRectSize + legendSpacing;          
+  //       var offset =  0;     
+  //       var horz = i*100;                      
+  //       var vert = 0;   
+  //       console.log(d);
+  //       return 'translate(' + horz + ',' + vert + ')';        // NEW
+  //   })
+  //   
+  // legendElement.append("rect")                              
+  // .attr('width', "100")                          
+  // .attr('height', "100")                         
+  // .attr('fill', "purple")                                   
+  // .attr('stroke', "blue")
+  // 
+  // legendElement.append("text")      
+  // .attr('x', 10)              // NEW
+  // .attr('y', 10)              // NEW                        
+  // .text(function(d) { return d; });     
+      
+
+      
+    // legend.append("rect")
+    //     .attr("id", function(d) { return d.data.id; })
+    //     .attr("class", "tile")
+    //     .attr("width", function(d) { return d.x1 - d.x0; })
+    //     .attr("height", function(d) { return d.y1 - d.y0; })
+    //     .on("mouseover", function(d) {      
+    //       tooltip.style("opacity", .9); 
+    //       tooltip.html(
+    //         'Name: ' + d.data.name + 
+    //         '<br>Platform: ' + d.data.platform + 
+    //         '<br>Sales: ' + d.data.sales
+    //       )
+    //       // .attr("data-sales", d.data.sales)
+    //       //  .style("left", (d3.event.pageX) + "px") 
+    //       //  .style("top", (d3.event.pageY - 28) + "px"); 
+    //     }) 
+    //     
+    //     .attr("fill", function(d) { return color(d.parent.data.id); });
+      
+  // var legend = svg.selectAll('.legend')
+  //     .data(domain)
+  //     .enter()
+  //     .append('g')
+  //     .attr('class', 'legend')
+  //     .attr('transform', function(d, i) {
+  //       var height = 100 + 100;
+  //       var offset =  height * color.domain().length / 2;
+  //       var horz = -2 * 100;
+  //       var vert = i * height - offset;
+  //       return 'translate(' + horz + ',' + vert + ')';
+  //     });
 });
 
 // d3.json("data/video_game_sales.json", function(error, data) {
