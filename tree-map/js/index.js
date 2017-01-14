@@ -62,7 +62,7 @@ d3.json(FILE_PATH, function(error,data){
           '<br>Sales: ' + d.data.sales
         )
         .attr("data-sales", d.data.sales)
-        .style("left", (d3.event.pageX) + "px") 
+        .style("left", (d3.event.pageX + 10) + "px") 
         .style("top", (d3.event.pageY - 28) + "px"); 
       }) 
       
