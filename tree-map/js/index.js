@@ -48,10 +48,10 @@ d3.json(FILE_PATH, function(error,data){
       .attr("data-name", function(d){
         return d.data.name;
       })
-      .attr("data-platform", function(d){
+      .attr("data-category", function(d){
         return d.data.platform;
       })
-      .attr("data-sales", function(d){
+      .attr("data-value", function(d){
         return d.data.sales;
       })
       .on("mouseover", function(d) {      
@@ -61,7 +61,7 @@ d3.json(FILE_PATH, function(error,data){
           '<br>Platform: ' + d.data.platform + 
           '<br>Sales: ' + d.data.sales
         )
-        .attr("data-sales", d.data.sales)
+        .attr("data-value", d.data.sales)
         .style("left", (d3.event.pageX + 10) + "px") 
         .style("top", (d3.event.pageY - 28) + "px"); 
       }) 

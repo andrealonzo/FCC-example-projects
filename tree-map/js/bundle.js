@@ -40028,62 +40028,63 @@ var FCC_Global =
 	        }
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be more than four fill colors used for the tiles');
 	      });
-	      it('5. Each tile will have the properties "data-name", "data-platform", "data-sales" containing their corresponding name, platform, and sales values', function () {
+	      it('5. Each tile will have the properties "data-name", "data-category", "data-value" containing their corresponding name, category, and value values', function () {
 	        var tiles = document.querySelectorAll('.tile');
 	        FCC_Global.assert.isAbove(tiles.length, 0, "Could not find any elements with a class=\"tile\"");
 
 	        for (var i = 0; i < tiles.length; i++) {
 	          var tile = tiles[i];
 	          FCC_Global.assert.isNotNull(tile.getAttribute("data-name"), "Could not find property 'data-name' in tile");
-	          FCC_Global.assert.isNotNull(tile.getAttribute("data-platform"), "Could not find property 'data-platform' in tile");
-	          FCC_Global.assert.isNotNull(tile.getAttribute("data-sales"), "Could not find property 'data-sales' in tile");
+	          FCC_Global.assert.isNotNull(tile.getAttribute("data-category"), "Could not find property 'data-category' in tile");
+	          FCC_Global.assert.isNotNull(tile.getAttribute("data-value"), "Could not find property 'data-value' in tile");
 	        }
 	      });
-	      it('6.  The area of each tile should correspond to the sales amount', function () {
+	      it('6.  The area of each tile should correspond to the value amount', function () {
 	        var tilesCollection = document.querySelectorAll('.tile');
 	        FCC_Global.assert.isAbove(tilesCollection.length, 0, "Could not find any elements with a class=\"tile\"");
 
 	        var tiles = [].slice.call(tilesCollection);
 
-	        // group tiles by platform
-	        var tilesByPlatform = {};
+	        // group tiles by category
+	        var tilesByCategory = {};
 	        for (var j = 1; j < tiles.length; j++) {
-	          var platform = tiles[j].getAttribute('data-platform');
-	          if (!tilesByPlatform[platform]) {
-	            tilesByPlatform[platform] = [];
+	          var category = tiles[j].getAttribute('data-category');
+	          if (!tilesByCategory[category]) {
+	            tilesByCategory[category] = [];
 	          }
-	          tilesByPlatform[platform].push(tiles[j]);
+	          tilesByCategory[category].push(tiles[j]);
 	        }
 
-	        tilesByPlatform = Object.values(tilesByPlatform);
+	        tilesByCategory = Object.values(tilesByCategory);
 
-	        // sort each platform array by sales
-	        tilesByPlatform.forEach(function (platform) {
-	          platform.sort(function (tile1, tile2) {
-	            var tile1Sales = tile1.getAttribute('data-sales');
-	            var tile2Sales = tile2.getAttribute('data-sales');
-	            return tile1Sales - tile2Sales;
+	        // sort each category array by value
+	        tilesByCategory.forEach(function (category) {
+	          category.sort(function (tile1, tile2) {
+	            var tile1Value = tile1.getAttribute('data-value');
+	            var tile2Value = tile2.getAttribute('data-value');
+	            return tile1Value - tile2Value;
 	          });
 	        });
 
-	        // outer loop loops through array platform arrays
-	        for (var k = 0; k < tilesByPlatform.length; k++) {
-	          if (tilesByPlatform[k].length > 1) {
+	        // outer loop loops through array category arrays
+	        for (var k = 0; k < tilesByCategory.length; k++) {
+	          if (tilesByCategory[k].length > 1) {
 	            // loops through each item in playfrom array
-	            for (var i = 0; i < tilesByPlatform[k].length - 1; i++) {
-	              var firstTile = +tilesByPlatform[k][i].getAttribute("data-sales");
-	              var secondTile = +tilesByPlatform[k][i + 1].getAttribute("data-sales");
+	            for (var i = 0; i < tilesByCategory[k].length - 1; i++) {
+	              var firstTile = +tilesByCategory[k][i].getAttribute("data-value");
+	              var secondTile = +tilesByCategory[k][i + 1].getAttribute("data-value");
 
-	              FCC_Global.assert.isAtMost(firstTile, secondTile, "data sales don't match up");
+	              FCC_Global.assert.isAtMost(firstTile, secondTile, "data value don't match up");
 	            }
 	          }
 	        }
 	      });
-
 	      it('7. My tree map should have a legend with corresponding id="legend"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
 	      });
+
 	      it('8. There should be at least 4 different fill colors used for the legend', function () {
+	        // TODO:  they could possibly use different shapes
 	        var rects = document.querySelectorAll('#legend rect');
 	        var uniqueColors = [];
 
@@ -40133,38 +40134,17 @@ var FCC_Global =
 	          }, firstRequestTimeout);
 	        });
 	      });
-
-	      it('10. My tooltip should have a "data-sales" property that corresponds to the given sales of the active tile.', function () {
+	      it('10. My tooltip should have a "data-value" property that corresponds to the given value of the active tile.', function () {
 	        var tooltip = document.getElementById('tooltip');
-	        FCC_Global.assert.isNotNull(tooltip.getAttribute("data-sales"), 'Could not find property "data-sales" in tooltip ');
+	        FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
 	        var tiles = (0, _jquery2.default)('.tile');
 	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
 
 	        var randomTiles = tiles[randomIndex];
 
 	        randomTiles.dispatchEvent(new MouseEvent('mouseover'));
-	        FCC_Global.assert.equal(tooltip.getAttribute('data-sales'), randomTiles.getAttribute('data-sales'), 'Tooltip\'s \"data-sales\" property should be equal to the active tiles\'s \"data-sales\" property');
+	        FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomTiles.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active tiles\'s \"data-value\" property');
 	      });
-	      // 5. Each cell will have the properties "data-name", "data-platform", "data-sales" containing their corresponding name, platform, and sales values
-
-	      // 7. The area of each cell should correspond to the sales amount. (get from bar chart)
-	      // //Get all cells
-	      // //calculate area of each cell
-	      // //sort cells by area
-	      // //see if the data-sales of each cell are sorted as well
-	      // 
-	      // 8.  Check if cells are grouped by data-platform (don't know how to check this)
-	      // 8.  Check if each platform grouping area corresponds to the cumulative data-sales of each video game (don't know how to check this)
-	      // 10. My tooltip should have a "data-???" property that corresponds to the given year of the active cell
-	      // 
-	      // Bonus stories
-	      // 11.  I can filter the treemap by year (ex.  Only show games from 2014)
-	      // 12.  I can limit the amount of video games shown (ex.  Only show top 100)
-	      // 
-	      // Super bonus stories
-	      // 13.  I can group the video games by year instead of platform
-	      // 14.  I can zoom ?  Here's an example http://bl.ocks.org/ganeshv/6a8e9ada3ab7f2d88022
-	      // 
 	    });
 	  });
 	}
