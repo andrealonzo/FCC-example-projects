@@ -10,6 +10,10 @@ body{
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.tile-text{
+  cursor: default;
+}
+
 #title{
   font-size: 40px;
 }

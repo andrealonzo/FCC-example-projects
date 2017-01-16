@@ -66,7 +66,7 @@ d3.json(DATASET.FILE_PATH, function(error,data){
     .enter().append("g")
       .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
 
-  cell.append("rect")
+  var tile = cell.append("rect")
       .attr("id", function(d) { return d.data.id; })
       .attr("class", "tile")
       .attr("width", function(d) { return d.x1 - d.x0; })
@@ -80,33 +80,34 @@ d3.json(DATASET.FILE_PATH, function(error,data){
       .attr("data-value", function(d){
         return d.data.value;
       })
-      .on("mouseover", function(d) {      
-        tooltip.style("opacity", .9); 
-        tooltip.html(
-          'Name: ' + d.data.name + 
-          '<br>Category: ' + d.data.category + 
-          '<br>Value: ' + d.data.value
-        )
-        .attr("data-value", d.data.value)
-        .style("left", (d3.event.pageX + 10) + "px") 
-        .style("top", (d3.event.pageY - 28) + "px"); 
-      }) 
-      
-      .on("mouseout", function(d) { 
-        tooltip.style("opacity", 0); 
-      })
       .attr("fill", function(d) { 
         return color(d.data.category); 
       });
 
   cell.append("text")
+    .attr('class', 'tile-text')
     .selectAll("tspan")
-      .data(function(d) { return d.data.name.split(/(?=[A-Z][^A-Z])/g); })
+    .data(function(d) { return d.data.name.split(/(?=[A-Z][^A-Z])/g); })
     .enter().append("tspan")
-      .attr("x", 4)
-      .attr("y", function(d, i) { return 13 + i * 10; })
-       .text(function(d) { return d; });
-       
+    .attr("x", 4)
+    .attr("y", function(d, i) { return 13 + i * 10; })
+    .text(function(d) { return d; });
+
+  cell.on("mouseover", function(d) {      
+    tooltip.style("opacity", .9); 
+    tooltip.html(
+      'Name: ' + d.data.name + 
+      '<br>Category: ' + d.data.category + 
+      '<br>Value: ' + d.data.value
+    )
+    .attr("data-value", d.data.value)
+    .style("left", (d3.event.pageX + 10) + "px") 
+    .style("top", (d3.event.pageY - 28) + "px"); 
+  })    
+  .on("mouseout", function(d) { 
+    tooltip.style("opacity", 0); 
+  })
+
        
   var categories = root.leaves().map(function(nodes){
     return nodes.data.category;
