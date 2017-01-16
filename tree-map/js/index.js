@@ -1,20 +1,28 @@
 const project_name="tree-map"
 
-const DATASETS = [{
-  TITLE: "Video Game Sales",
-  DESCRIPTION: "Top 100 Most Sold Video Games Grouped by Platform",
-  FILE_PATH:"data/video_game_sales.json"
-},{
-  TITLE: "Movie Sales",
-  DESCRIPTION: "Top 100 Highest Grossing Movies Grouped By Genre",
-  FILE_PATH:"data/movies.json"
-},{
-  TITLE: "Kickstarter Pledges",
-  DESCRIPTION: "Top 100 Most Pledged Kickstarter Campaigns Grouped By Category",
-  FILE_PATH:"data/kickstarter.json"
-}]
+const DATASETS = {
+  videogames:{
+    TITLE: "Video Game Sales",
+    DESCRIPTION: "Top 100 Most Sold Video Games Grouped by Platform",
+    FILE_PATH:"data/video_game_sales.json"
+},
+  movies:{
+    TITLE: "Movie Sales",
+    DESCRIPTION: "Top 100 Highest Grossing Movies Grouped By Genre",
+    FILE_PATH:"data/movies.json"
+},
+  kickstarter:{
+    TITLE: "Kickstarter Pledges",
+    DESCRIPTION: "Top 100 Most Pledged Kickstarter Campaigns Grouped By Category",
+    FILE_PATH:"data/kickstarter.json"
+}}
 
-const DATASET = DATASETS[2];
+var urlParams = new URLSearchParams(window.location.search);
+const DEFAULT_DATASET = "videogames"
+const DATASET = DATASETS[urlParams.get('data') || DEFAULT_DATASET];
+//const dataSelector = document.getElementById("data-selector");
+
+//dataSelector.innerHTML = '<a>' + DATASETS[0].TITLE + '</a>' + '/' + '<a>' + DATASETS[1].TITLE + '</a>' + '/' + '<a>' + DATASETS[2].TITLE + '</a>';
 
 document.getElementById("title").innerHTML = DATASET.TITLE;
 document.getElementById("description").innerHTML = DATASET.DESCRIPTION;
@@ -110,10 +118,11 @@ d3.json(DATASET.FILE_PATH, function(error,data){
   var legendWidth = +legend.attr("width");
   const LEGEND_OFFSET = 10;
   const LEGEND_RECT_SIZE = 15;
-  const LEGEND_SPACING = 60;
+  const LEGEND_H_SPACING = 150;
+  const LEGEND_V_SPACING = 10;
   const LEGEND_TEXT_X_OFFSET = 3;
   const LEGEND_TEXT_Y_OFFSET = -2;
-  var legendElemsPerRow = Math.floor(legendWidth/LEGEND_SPACING);
+  var legendElemsPerRow = Math.floor(legendWidth/LEGEND_H_SPACING);
   
   var legendElem = legend
     .append("g")
@@ -123,16 +132,17 @@ d3.json(DATASET.FILE_PATH, function(error,data){
     .enter().append("g")
     .attr("transform", function(d, i) { 
       return 'translate(' + 
-      ((i%legendElemsPerRow)*LEGEND_SPACING) + ',' + 
-      ((Math.floor(i/legendElemsPerRow))*LEGEND_RECT_SIZE) + ')';
+      ((i%legendElemsPerRow)*LEGEND_H_SPACING) + ',' + 
+      ((Math.floor(i/legendElemsPerRow))*LEGEND_RECT_SIZE + (LEGEND_V_SPACING*(Math.floor(i/legendElemsPerRow)))) + ')';
     })
      
   legendElem.append("rect")                              
      .attr('width', LEGEND_RECT_SIZE)                          
-     .attr('height', LEGEND_RECT_SIZE)                         
+     .attr('height', LEGEND_RECT_SIZE)     
+     .attr('class','legend-item')                 
      .attr('fill', function(d){
        return color(d);
-     })  
+     })
      
    legendElem.append("text")                              
      .attr('x', LEGEND_RECT_SIZE + LEGEND_TEXT_X_OFFSET)                          

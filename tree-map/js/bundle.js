@@ -40014,7 +40014,7 @@ var FCC_Global =
 	      it('3. My tree map should have tiles with a corresponding class="tile" that represent the data', function () {
 	        FCC_Global.assert.isAbove(document.querySelectorAll('.tile').length, 0, 'Could not find elements with class="tile" ');
 	      });
-	      it('4. There should be at least 4 different fill colors used for the tiles', function () {
+	      it('4. There should be at least 2 different fill colors used for the tiles', function () {
 	        var tiles = document.querySelectorAll('.tile');
 	        var uniqueColors = [];
 
@@ -40026,7 +40026,7 @@ var FCC_Global =
 	            uniqueColors.push(tileColor);
 	          }
 	        }
-	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be more than four fill colors used for the tiles');
+	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be more than two fill colors used for the tiles');
 	      });
 	      it('5. Each tile should have the properties "data-name", "data-category",  and "data-value" containing their corresponding name, category, and value', function () {
 	        var tiles = document.querySelectorAll('.tile');
@@ -40082,19 +40082,24 @@ var FCC_Global =
 	      it('7. My tree map should have a legend with corresponding id="legend"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
 	      });
-	      it('8. There should be at least 4 different fill colors used for the legend', function () {
-	        var rects = document.querySelectorAll('#legend rect');
+	      it('8. My legend should have legend items with corresponding class="legend-item"', function () {
+	        FCC_Global.assert.isAbove(document.querySelectorAll('#legend .legend-item').length, 0, 'Could not find legend items with class="legend-item"');
+	      });
+	      it('8. The legend items should use at least 2 different fill colors', function () {
+	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
+
+	        var legendItems = document.querySelectorAll('#legend .legend-item');
 	        var uniqueColors = [];
 
-	        for (var i = 0; i < rects.length; i++) {
-	          var rectColor = rects[i].style.fill || rects[i].getAttribute('fill');
+	        for (var i = 0; i < legendItems.length; i++) {
+	          var legendItemColors = legendItems[i].style.fill || legendItems[i].getAttribute('fill');
 
 	          // if the current color isn't in the uniqueColors arr, push it 
-	          if (uniqueColors.indexOf(rectColor) === -1) {
-	            uniqueColors.push(rectColor);
+	          if (uniqueColors.indexOf(legendItemColors) === -1) {
+	            uniqueColors.push(legendItemColors);
 	          }
 	        }
-	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be at least four fill colors used for the legend ');
+	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be at least two fill colors used for the legend ');
 	      });
 	      it('9.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 
