@@ -93,7 +93,8 @@ d3.json(DATASET.FILE_PATH, function(error,data){
     .attr("y", function(d, i) { return 13 + i * 10; })
     .text(function(d) { return d; });
 
-  cell.on("mouseover", function(d) {      
+  cell.on("mousemove", function(d) {  
+    console.log("mouseover");    
     tooltip.style("opacity", .9); 
     tooltip.html(
       'Name: ' + d.data.name + 
