@@ -49,19 +49,19 @@ d3.json(FILE_PATH, function(error,data){
         return d.data.name;
       })
       .attr("data-category", function(d){
-        return d.data.platform;
+        return d.data.category;
       })
       .attr("data-value", function(d){
-        return d.data.sales;
+        return d.data.value;
       })
       .on("mouseover", function(d) {      
         tooltip.style("opacity", .9); 
         tooltip.html(
           'Name: ' + d.data.name + 
-          '<br>Platform: ' + d.data.platform + 
-          '<br>Sales: ' + d.data.sales
+          '<br>Category: ' + d.data.category + 
+          '<br>Value: ' + d.data.value
         )
-        .attr("data-value", d.data.sales)
+        .attr("data-value", d.data.value)
         .style("left", (d3.event.pageX + 10) + "px") 
         .style("top", (d3.event.pageY - 28) + "px"); 
       }) 
@@ -70,7 +70,7 @@ d3.json(FILE_PATH, function(error,data){
         tooltip.style("opacity", 0); 
       })
       .attr("fill", function(d) { 
-        return color(d.data.platform); 
+        return color(d.data.category); 
       });
 
   cell.append("text")
@@ -82,11 +82,11 @@ d3.json(FILE_PATH, function(error,data){
        .text(function(d) { return d; });
        
        
-  var platforms = root.leaves().map(function(nodes){
-    return nodes.data.platform;
+  var categories = root.leaves().map(function(nodes){
+    return nodes.data.category;
   });
-  platforms = platforms.filter(function(platform, index, self){
-    return self.indexOf(platform)===index;    
+  categories = categories.filter(function(category, index, self){
+    return self.indexOf(category)===index;    
   })
   var legend = d3.select("#legend")
   var legendWidth = +legend.attr("width");
@@ -101,7 +101,7 @@ d3.json(FILE_PATH, function(error,data){
     .append("g")
     .attr("transform", "translate(0," + LEGEND_OFFSET + ")")
     .selectAll("g")
-    .data(platforms)
+    .data(categories)
     .enter().append("g")
     .attr("transform", function(d, i) { 
       return 'translate(' + 
@@ -123,6 +123,6 @@ d3.json(FILE_PATH, function(error,data){
 });
 
 function sumBySize(d) {
-  return d.sales;
+  return d.value;
 }
 

@@ -40028,7 +40028,7 @@ var FCC_Global =
 	        }
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be more than four fill colors used for the tiles');
 	      });
-	      it('5. Each tile will have the properties "data-name", "data-category", "data-value" containing their corresponding name, category, and value values', function () {
+	      it('5. Each tile should have the properties "data-name", "data-category",  and "data-value" containing their corresponding name, category, and value', function () {
 	        var tiles = document.querySelectorAll('.tile');
 	        FCC_Global.assert.isAbove(tiles.length, 0, "Could not find any elements with a class=\"tile\"");
 
@@ -40039,7 +40039,7 @@ var FCC_Global =
 	          FCC_Global.assert.isNotNull(tile.getAttribute("data-value"), "Could not find property 'data-value' in tile");
 	        }
 	      });
-	      it('6.  The area of each tile should correspond to the value amount', function () {
+	      it('6.  The area of each tile should correspond to the data-value amount', function () {
 	        var tilesCollection = document.querySelectorAll('.tile');
 	        FCC_Global.assert.isAbove(tilesCollection.length, 0, "Could not find any elements with a class=\"tile\"");
 
@@ -40074,7 +40074,7 @@ var FCC_Global =
 	              var firstTile = +tilesByCategory[k][i].getAttribute("data-value");
 	              var secondTile = +tilesByCategory[k][i + 1].getAttribute("data-value");
 
-	              FCC_Global.assert.isAtMost(firstTile, secondTile, "data value don't match up");
+	              FCC_Global.assert.isAtMost(firstTile, secondTile, "data-value property does not match tile area");
 	            }
 	          }
 	        }
@@ -40082,9 +40082,7 @@ var FCC_Global =
 	      it('7. My tree map should have a legend with corresponding id="legend"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
 	      });
-
 	      it('8. There should be at least 4 different fill colors used for the legend', function () {
-	        // TODO:  they could possibly use different shapes
 	        var rects = document.querySelectorAll('#legend rect');
 	        var uniqueColors = [];
 
