@@ -1,5 +1,24 @@
 const project_name="tree-map"
 
+const DATASETS = [{
+  TITLE: "Video Game Sales",
+  DESCRIPTION: "Top 100 Most Sold Video Games Grouped by Platform",
+  FILE_PATH:"data/video_game_sales.json"
+},{
+  TITLE: "Movie Sales",
+  DESCRIPTION: "Top 100 Highest Grossing Movies Grouped By Genre",
+  FILE_PATH:"data/movies.json"
+},{
+  TITLE: "Kickstarter Pledges",
+  DESCRIPTION: "Top 100 Most Pledged Kickstarter Campaigns Grouped By Category",
+  FILE_PATH:"data/kickstarter.json"
+}]
+
+const DATASET = DATASETS[2];
+
+document.getElementById("title").innerHTML = DATASET.TITLE;
+document.getElementById("description").innerHTML = DATASET.DESCRIPTION;
+
 // Define body
 var body = d3.select("body");
   
@@ -21,8 +40,7 @@ var treemap = d3.treemap()
     .size([width, height])
     .paddingInner(1);
 
-const FILE_PATH = "data/video_game_sales.json"
-d3.json(FILE_PATH, function(error,data){
+d3.json(DATASET.FILE_PATH, function(error,data){
   
   if (error) throw error;
   
