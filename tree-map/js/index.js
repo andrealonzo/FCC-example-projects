@@ -127,7 +127,7 @@ d3.json(DATASET.FILE_PATH, function(error,data){
   
   var legendElem = legend
     .append("g")
-    .attr("transform", "translate(0," + LEGEND_OFFSET + ")")
+    .attr("transform", "translate(60," + LEGEND_OFFSET + ")")
     .selectAll("g")
     .data(categories)
     .enter().append("g")

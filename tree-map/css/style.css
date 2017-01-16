@@ -1,8 +1,17 @@
+html, body{
+  margin: 0;
+  padding: 0;
+}
+
 svg {
   font: 10px sans-serif;
   text-align: center;
   display: block;
   margin: auto;
+}
+
+a{
+  text-decoration: none;
 }
 
 body{
@@ -15,7 +24,12 @@ body{
 }
 
 #title{
-  font-size: 40px;
+  font-size: 45px;
+  margin-bottom: 10px;
+}
+
+#description{
+  padding-bottom: 1.5rem;
 }
 
 div.tooltip {
@@ -34,4 +48,7 @@ div.tooltip {
   text-align: center;
   display: block;
   margin: auto;
+  padding-bottom: 5px;
+  margin-bottom: 2rem;
+  margin-top: 1rem;
 }
