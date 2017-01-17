@@ -64,6 +64,7 @@ d3.json(DATASET.FILE_PATH, function(error,data){
   var cell = svg.selectAll("g")
     .data(root.leaves())
     .enter().append("g")
+      .attr("class", "group")
       .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
 
   var tile = cell.append("rect")
@@ -82,7 +83,22 @@ d3.json(DATASET.FILE_PATH, function(error,data){
       })
       .attr("fill", function(d) { 
         return color(d.data.category); 
-      });
+      })
+      .on("mousemove", function(d) {  
+        console.log("mouseover");    
+        tooltip.style("opacity", .9); 
+        tooltip.html(
+          'Name: ' + d.data.name + 
+          '<br>Category: ' + d.data.category + 
+          '<br>Value: ' + d.data.value
+        )
+        .attr("data-value", d.data.value)
+        .style("left", (d3.event.pageX + 10) + "px") 
+        .style("top", (d3.event.pageY - 28) + "px"); 
+      })    
+      .on("mouseout", function(d) { 
+        tooltip.style("opacity", 0); 
+      })
 
   cell.append("text")
     .attr('class', 'tile-text')
@@ -93,21 +109,6 @@ d3.json(DATASET.FILE_PATH, function(error,data){
     .attr("y", function(d, i) { return 13 + i * 10; })
     .text(function(d) { return d; });
 
-  cell.on("mousemove", function(d) {  
-    console.log("mouseover");    
-    tooltip.style("opacity", .9); 
-    tooltip.html(
-      'Name: ' + d.data.name + 
-      '<br>Category: ' + d.data.category + 
-      '<br>Value: ' + d.data.value
-    )
-    .attr("data-value", d.data.value)
-    .style("left", (d3.event.pageX + 10) + "px") 
-    .style("top", (d3.event.pageY - 28) + "px"); 
-  })    
-  .on("mouseout", function(d) { 
-    tooltip.style("opacity", 0); 
-  })
 
        
   var categories = root.leaves().map(function(nodes){

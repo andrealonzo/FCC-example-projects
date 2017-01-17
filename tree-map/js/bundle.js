@@ -40076,7 +40076,7 @@ var FCC_Global =
 	      it('8. My legend should have legend items with corresponding class="legend-item"', function () {
 	        FCC_Global.assert.isAbove(document.querySelectorAll('#legend .legend-item').length, 0, 'Could not find legend items with class="legend-item"');
 	      });
-	      it('8. The legend items should use at least 2 different fill colors', function () {
+	      it('9. The legend items should use at least 2 different fill colors', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find element with id="legend" ');
 
 	        var legendItems = document.querySelectorAll('#legend .legend-item');
@@ -40092,7 +40092,7 @@ var FCC_Global =
 	        }
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be at least two fill colors used for the legend ');
 	      });
-	      it('9.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
+	      it('10.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 
 	        var firstRequestTimeout = 100;
 	        var secondRequestTimeout = 2000;
@@ -40107,6 +40107,8 @@ var FCC_Global =
 	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
 	        var randomTile = tiles[randomIndex];
 	        randomTile.dispatchEvent(new MouseEvent('mouseover'));
+	        randomTile.dispatchEvent(new MouseEvent('mousemove'));
+	        randomTile.dispatchEvent(new MouseEvent('mouseenter'));
 
 	        // promise is used to prevent test from ending prematurely
 	        return new Promise(function (resolve, reject) {
@@ -40128,16 +40130,21 @@ var FCC_Global =
 	          }, firstRequestTimeout);
 	        });
 	      });
-	      it('10. My tooltip should have a "data-value" property that corresponds to the given value of the active tile.', function () {
+	      it('11. My tooltip should have a "data-value" property that corresponds to the given value of the active tile.', function () {
 	        var tooltip = document.getElementById('tooltip');
 	        FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
-	        var tiles = (0, _jquery2.default)('.tile');
+	        var tiles = document.querySelectorAll('.tile');
 	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
 
-	        var randomTiles = tiles[randomIndex];
+	        var randomTile = tiles[randomIndex];
 
-	        randomTiles.dispatchEvent(new MouseEvent('mouseover'));
-	        FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomTiles.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active tiles\'s \"data-value\" property');
+	        randomTile.dispatchEvent(new MouseEvent('mouseover'));
+	        randomTile.dispatchEvent(new MouseEvent('mousemove'));
+	        randomTile.dispatchEvent(new MouseEvent('mouseenter'));
+	        FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomTile.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active tiles\'s \"data-value\" property');
+
+	        //clear out tooltip
+	        randomTile.dispatchEvent(new MouseEvent('mouseout'));
 	      });
 	    });
 	  });
