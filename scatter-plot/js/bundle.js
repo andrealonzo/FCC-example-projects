@@ -20753,7 +20753,7 @@ var FCC_Global =
 	            var bars = (0, _jquery2.default)('.bar');
 
 	            // place mouse on random bar and check if tooltip is visible
-	            var randomIndex = (0, _globalD3Tests.getRandomIndex)(bars.length);
+	            var randomIndex = getRandomIndex(bars.length);
 	            var randomBar = bars[randomIndex];
 	            randomBar.dispatchEvent(new MouseEvent('mouseover'));
 
@@ -20761,14 +20761,14 @@ var FCC_Global =
 	            return new Promise(function (resolve, reject) {
 	                // timeout is used to accommodate tooltip transitions
 	                setTimeout(function (_) {
-	                    if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'visible') {
+	                    if (getToolTipStatus(tooltip) !== 'visible') {
 	                        reject(new Error('Tooltip should be visible when mouse is on a bar '));
 	                    }
 
 	                    // remove mouse from bar and check if tooltip is hidden again
 	                    randomBar.dispatchEvent(new MouseEvent('mouseout'));
 	                    setTimeout(function (_) {
-	                        if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'hidden') {
+	                        if (getToolTipStatus(tooltip) !== 'hidden') {
 	                            reject(new Error('Tooltip should be hidden when mouse is not on a bar '));
 	                        } else {
 	                            resolve();
@@ -20783,7 +20783,7 @@ var FCC_Global =
 	            FCC_Global.assert.isNotNull(tooltip.getAttribute("data-date"), 'Could not find property "data-date" in tooltip ');
 
 	            var bars = (0, _jquery2.default)('.bar');
-	            var randomIndex = (0, _globalD3Tests.getRandomIndex)(bars.length);
+	            var randomIndex = getRandomIndex(bars.length);
 
 	            var randomBar = bars[randomIndex];
 
@@ -20792,6 +20792,8 @@ var FCC_Global =
 	            FCC_Global.assert.equal(tooltip.getAttribute('data-date'), randomBar.getAttribute('data-date'), 'Tooltip\'s "data-date" property should be equal to the active bar\'s "data-date" property ');
 	        });
 	    });
+
+	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.bar'), "data-date", "data-date");
 	}
 
 /***/ },
@@ -20803,8 +20805,6 @@ var FCC_Global =
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.getToolTipStatus = getToolTipStatus;
-	exports.getRandomIndex = getRandomIndex;
 	exports.testToolTip = testToolTip;
 
 	var _jquery = __webpack_require__(1);
@@ -20831,7 +20831,7 @@ var FCC_Global =
 	/**
 	  Mouses over random areas to see if a tooltip appears
 	**/
-	function testToolTip(areas, attributeName) {
+	function testToolTip(areas, toolTipDataName, areaDataName) {
 	  describe('#TooltipTests', function () {
 	    it('1. I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 	      var firstRequestTimeout = 100;
@@ -20868,9 +20868,9 @@ var FCC_Global =
 	        }, firstRequestTimeout);
 	      });
 	    });
-	    it('2. My tooltip should have a "' + attributeName + '" property that corresponds to the given value of the active area.', function () {
+	    it('2. My tooltip should have a "' + toolTipDataName + '" property that corresponds to the "' + areaDataName + '" of the active area.', function () {
 	      var tooltip = document.getElementById('tooltip');
-	      FCC_Global.assert.isNotNull(tooltip.getAttribute(attributeName), 'Could not find property "' + attributeName + '" in tooltip ');
+	      FCC_Global.assert.isNotNull(tooltip.getAttribute(toolTipDataName), 'Could not find property "' + toolTipDataName + '" in tooltip ');
 	      var randomIndex = getRandomIndex(areas.length);
 
 	      var randomArea = areas[randomIndex];
@@ -20878,7 +20878,7 @@ var FCC_Global =
 	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
 	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
 	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
-	      FCC_Global.assert.equal(tooltip.getAttribute(attributeName), randomArea.getAttribute(attributeName), 'Tooltip\'s \"' + attributeName + '\" property should be equal to the active area\'s \"' + attributeName + '\" property');
+	      FCC_Global.assert.equal(tooltip.getAttribute(toolTipDataName), randomArea.getAttribute(areaDataName), 'Tooltip\'s \"' + toolTipDataName + '\" property should be equal to the active area\'s \"' + areaDataName + '\" property');
 
 	      //clear out tooltip
 	      randomArea.dispatchEvent(new MouseEvent('mouseout'));
@@ -21041,54 +21041,9 @@ var FCC_Global =
 	            it('13. I can see a legend that has id="legend".', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById('legend'), 'There should be an element with id="legend" ');
 	            });
-
-	            it('14. I can mouse over any dot and see a tooltip with corresponding id="tooltip" which displays more information about the data.', function () {
-	                var firstRequestTimeout = 100;
-	                var secondRequestTimeout = 2000;
-	                this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
-	                FCC_Global.assert.isNotNull(document.getElementById('tooltip'), 'There should be an element with id="tooltip" ');
-
-	                var tooltip = document.getElementById('tooltip');
-	                var dots = (0, _jquery2.default)('.dot');
-
-	                // place mouse on random bar and check if tooltip is visible
-	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(dots.length);
-	                var randomDot = dots[randomIndex];
-	                randomDot.dispatchEvent(new MouseEvent('mouseover'));
-
-	                // promise is used to prevent test from ending prematurely
-	                return new Promise(function (resolve, reject) {
-	                    // timeout is used to accommodate tooltip transitions
-	                    setTimeout(function (_) {
-	                        if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'visible') {
-	                            reject(new Error('Tooltip should be visible when mouse is on a dot '));
-	                        }
-
-	                        // remove mouse from cell and check if tooltip is hidden again
-	                        randomDot.dispatchEvent(new MouseEvent('mouseout'));
-	                        setTimeout(function (_) {
-	                            if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'hidden') {
-	                                reject(new Error('Tooltip should be hidden when mouse is not on a dot '));
-	                            } else {
-	                                resolve();
-	                            }
-	                        }, secondRequestTimeout);
-	                    }, firstRequestTimeout);
-	                });
-	            });
-
-	            it('15. My tooltip should have a "data-year" property that corresponds to the given year of the active dot.', function () {
-	                var tooltip = document.getElementById('tooltip');
-	                FCC_Global.assert.isNotNull(tooltip.getAttribute("data-year"), 'Could not find property "data-year" in tooltip ');
-	                var dots = (0, _jquery2.default)('.dot');
-	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(dots.length);
-
-	                var randomDot = dots[randomIndex];
-
-	                randomDot.dispatchEvent(new MouseEvent('mouseover'));
-	                FCC_Global.assert.equal(tooltip.getAttribute('data-year'), randomDot.getAttribute('data-xvalue'), 'Tooltip\'s \"data-year\" property should be equal to the active dot\'s \"data-xvalue\" property');
-	            });
 	        });
+
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.dot'), "data-year", "data-xvalue");
 	    });
 	}
 
@@ -21225,7 +21180,7 @@ var FCC_Global =
 	            });
 	        });
 
-	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'), "data-education");
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'), "data-education", "data-education");
 	    });
 	}
 
@@ -40208,7 +40163,7 @@ var FCC_Global =
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be at least two fill colors used for the legend ');
 	      });
 	    });
-	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.tile'), 'data-value');
+	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.tile'), 'data-value', 'data-value');
 	  });
 	}
 
@@ -40500,7 +40455,7 @@ var FCC_Global =
 	                FCC_Global.assert.isNotNull(document.getElementById('legend'), 'Could not find an element with id="legend" ');
 	            });
 	        });
-	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.cell'), "data-year");
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.cell'), "data-year", "data-year");
 	    });
 	}
 
