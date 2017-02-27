@@ -17,12 +17,19 @@ const DATASETS = {
     FILE_PATH:"data/kickstarter.json"
 }}
 
-var urlParams = new URLSearchParams(window.location.search);
-const DEFAULT_DATASET = "videogames"
-const DATASET = DATASETS[urlParams.get('data') || DEFAULT_DATASET];
-//const dataSelector = document.getElementById("data-selector");
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
 
-//dataSelector.innerHTML = '<a>' + DATASETS[0].TITLE + '</a>' + '/' + '<a>' + DATASETS[1].TITLE + '</a>' + '/' + '<a>' + DATASETS[2].TITLE + '</a>';
+const DEFAULT_DATASET = "videogames"
+const DATASET = DATASETS[getQueryVariable('data') || DEFAULT_DATASET];
 
 document.getElementById("title").innerHTML = DATASET.TITLE;
 document.getElementById("description").innerHTML = DATASET.DESCRIPTION;
@@ -84,8 +91,7 @@ d3.json(DATASET.FILE_PATH, function(error,data){
       .attr("fill", function(d) { 
         return color(d.data.category); 
       })
-      .on("mousemove", function(d) {  
-        console.log("mouseover");    
+      .on("mousemove", function(d) { 
         tooltip.style("opacity", .9); 
         tooltip.html(
           'Name: ' + d.data.name + 
