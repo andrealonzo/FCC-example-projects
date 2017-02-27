@@ -62,8 +62,6 @@ var FCC_Global =
 	exports.alertOnce = alertOnce;
 	exports.hamburger_transform = hamburger_transform;
 	exports.FCCInitTestRunner = FCCInitTestRunner;
-	exports.getToolTipStatus = getToolTipStatus;
-	exports.getRandomIndex = getRandomIndex;
 
 	var _jquery = __webpack_require__(1);
 
@@ -121,23 +119,23 @@ var FCC_Global =
 
 	var _barChartTests2 = _interopRequireDefault(_barChartTests);
 
-	var _scatterPlotTests = __webpack_require__(54);
+	var _scatterPlotTests = __webpack_require__(55);
 
 	var _scatterPlotTests2 = _interopRequireDefault(_scatterPlotTests);
 
-	var _choroplethTests = __webpack_require__(55);
+	var _choroplethTests = __webpack_require__(56);
 
 	var _choroplethTests2 = _interopRequireDefault(_choroplethTests);
 
-	var _treeMapTests = __webpack_require__(57);
+	var _treeMapTests = __webpack_require__(58);
 
 	var _treeMapTests2 = _interopRequireDefault(_treeMapTests);
 
-	var _quoteMachineTests = __webpack_require__(58);
+	var _quoteMachineTests = __webpack_require__(59);
 
 	var _quoteMachineTests2 = _interopRequireDefault(_quoteMachineTests);
 
-	var _heatMapTests = __webpack_require__(59);
+	var _heatMapTests = __webpack_require__(60);
 
 	var _heatMapTests2 = _interopRequireDefault(_heatMapTests);
 
@@ -158,10 +156,10 @@ var FCC_Global =
 	// When the document is fully loaded,
 	// create the "Tests" button and the corresponding modal window, jquery required)
 	(0, _jquery2.default)(document).ready(function () {
-	    // check for chrome
+	    // alert users about cross-browser compatibility issues
 	    var isChrome = !!window.chrome && !!window.chrome.webstore;
 	    if (isChrome === false) {
-	        alert('Test Suite Compatible with Chrome Only');
+	        FCC_Global.alertOnce('Intro Alert', 'Test suites are currently optimized for Chrome. There are known issues that we are trying to work through to make these suites fully cross-browser compatible, but it is a work in progress. For the best user experience, please use Chrome until these issues are resolved. Thanks and Happy Coding!');
 	    }
 	    // check mocha is loaded and populate test suite
 	    var mochaCheck = setInterval(function () {
@@ -184,12 +182,12 @@ var FCC_Global =
 	                if (typeof project_name === 'undefined' && project_titleCase === null) {
 	                    document.getElementById('placeholder').innerHTML = '- - -';
 	                    document.getElementById('fcc_test_suite_indicator_wrapper').innerHTML = '';
-	                } else if (typeof project_name === 'undefined') {
+	                } else if (typeof project_name !== 'undefined') {
+	                    document.getElementById('placeholder').innerHTML = '' + localStorage.getItem('example_project');
+	                    document.getElementById('fcc_test_suite_indicator_wrapper').innerHTML = '<span id=fcc_test_suite_indicator>FCC Test Suite: ' + localStorage.getItem('example_project') + '</span>';;
+	                } else {
 	                    document.getElementById('placeholder').innerHTML = project_titleCase;
 	                    document.getElementById('fcc_test_suite_indicator_wrapper').innerHTML = '<span id=fcc_test_suite_indicator>FCC Test Suite: ' + project_titleCase + '</span>';
-	                } else {
-	                    document.getElementById('placeholder').innerHTML = project_name.replace(/-/g, ' ');
-	                    document.getElementById('fcc_test_suite_indicator_wrapper').innerHTML = '<span id=fcc_test_suite_indicator>FCC Test Suite: ' + project_name.replace(/-/g, ' ') + '</span>';
 	                }
 	            };
 	        } catch (err) {
@@ -260,12 +258,27 @@ var FCC_Global =
 	    }
 	}
 
+	// cannot reset classList with an = assignment 
+	// due to cross-browser conflicts 
+	function clearClassList(elem) {
+	    var classListAsArray = new Array(elem.classList.length);
+
+	    for (var i = 0; i < elem.classList.length; i++) {
+	        classListAsArray[i] = elem.classList[i];
+	    }
+
+	    for (var i = 0; i < classListAsArray.length; i++) {
+	        elem.classList.remove(classListAsArray[i]);
+	    }
+	}
+
 	// run tests
 	function FCCRerunTests() {
 	    var button = document.getElementById('fcc_test_button');
 	    button.innerHTML = typeof project_name === 'undefined' && localStorage.getItem('project_selector') === null ? 'Load Tests!' : 'Testing';
 	    button.title = typeof project_name === 'undefined' && localStorage.getItem('project_selector') === null ? 'Select test suite from dropdown above' : 'CTRL + SHIFT + T';
-	    button.classList = ["fcc_foldout_buttons"];
+	    clearClassList(button);
+	    button.classList.add("fcc_foldout_buttons");
 	    button.classList.add("fcc_test_btn-default");
 	    FCCInitTestRunner();
 	}
@@ -288,7 +301,7 @@ var FCC_Global =
 	    if (map[17] && map[16] && map[13]) {
 	        // run tests: Ctrl + Shift + Enter
 	        if (localStorage.getItem('project_selector') === 'markdown-previewer') {
-	            alertOnce();
+	            alertOnce('alerted', 'Run-Test hotkey disabled for this project, please use mouse.');
 	            return;
 	        } else {
 	            FCCRerunTests();
@@ -307,13 +320,13 @@ var FCC_Global =
 	};
 
 	// shortcuts interfere w/ markdown tests, disable and alert
-	function alertOnce() {
-	    var alerted = sessionStorage.getItem('alerted') || false;
+	function alertOnce(item, message) {
+	    var alerted = sessionStorage.getItem(item) || false;
 	    if (alerted) {
 	        return;
 	    } else {
-	        alert('Run-Test hotkey disabled for this project, please use mouse.');
-	        sessionStorage.setItem('alerted', true);
+	        alert(message);
+	        sessionStorage.setItem(item, true);
 	    }
 	}
 
@@ -424,21 +437,11 @@ var FCC_Global =
 	    testRunner.on("end", updateEnd); // update the "tests" button caption at  the end of the overhall execution.
 	};
 
-	// GLOBAL D3 TEST FUNCTIONS:
-	function getToolTipStatus(tooltip) {
-	    // jQuery's :hidden selector checks if the element or its parents have a display of none, a type of hidden, or height/width set to 0
-	    // if the element is hidden with opacity=0 or visibility=hidden, jQuery's :hidden will return false because it takes up space in the DOM
-	    // this test combines jQuery's :hidden with tests for opacity and visbility to cover most use cases (z-index and potentially others are not tested)
-	    if ((0, _jquery2.default)(tooltip).is(':hidden') || tooltip.style.opacity === '0' || tooltip.style.visibility === 'hidden') {
-	        return 'hidden';
-	    } else {
-	        return 'visible';
-	    }
-	}
-
-	function getRandomIndex(max) {
-	    return Math.floor(Math.random() * max);
-	}
+	// polyfill for enabling NodeList.forEach() method - IE, Edge, Safari
+	(function () {
+	    if (typeof NodeList.prototype.forEach === "function") return false;
+	    NodeList.prototype.forEach = Array.prototype.forEach;
+	})();
 
 /***/ },
 /* 1 */
@@ -18981,7 +18984,7 @@ var FCC_Global =
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
-	var test_suite_skeleton = "\n    <style>\n        @import url('https://fonts.googleapis.com/css?family=Noto+Sans');\n\n        /* TEST/MESSAGE CENTER CSS */\n\n        #fcc_test_message-box {\n            font-size: 20px !important;\n            font-family: Noto Sans, arial, sans-serif !important;\n            position: fixed;\n            left: 0;\n            bottom: 0;\n            right: 0;\n            text-align: center;\n            background-color: rgba(0, 0, 0, 0.8);\n            transition: all .5s;\n            z-index: 100000;\n            overflow: auto;\n        }\n\n        .fcc_test_message-box-hidden {\n            visibility: hidden;\n            opacity: 0;\n            top: -300px;\n        }\n\n        .fcc_test_message-box-shown {\n            visibility: visible;\n            opacity: 1;\n            top: 0;\n        }\n\n        .fcc_test_message-box-content {\n            position: relative;\n            color: black;\n            background-color: white;\n            top: 10vh;\n            width: 80%;\n            margin: 0 auto !important;\n            text-align: initial;\n            border-radius: 10px;\n            display: flex;\n            flex-direction: column;\n        }\n        .fcc_test_message-box-header,\n        .fcc_test_message-box-footer{\n            position: relative;\n            flex: none;\n            box-sizing: border-box !important;\n            padding: 10px !important;\n        }\n        .fcc_test_message-box-header {\n            border-bottom: 1px solid rgb(229,229,229);\n            height: 60px;\n        }\n\n        .fcc_test_message-box-header .title {\n            float: left;\n            font-size: 30px !important;\n            line-height: 40px !important;\n            margin-left: 10px !important;\n        }\n\n        .fcc_test_message-box-body {\n            flex: 1;\n        }\n\n        .fcc_test_message-box-footer {\n            border-top: 1px solid rgb(229,229,229);\n            height: 70px;\n        }\n\n        .fcc_test_message-box-close-btn {\n            float: right;\n            color: black;\n            background-color: white;\n            border: 1px solid rgb(229,229,229);\n            border-radius: 4px;\n            padding: 10px 20px !important;\n            margin-bottom: 10px;\n            transition: all .3s;\n        }\n        .fcc_test_message-box-close-btn:hover {\n            color: white;\n            background-color: black;\n        }\n\n        #mocha {\n            margin: 10px !important;\n        }\n        #mocha .test pre {\n            background-color: rgb(245, 245, 245);\n        }\n        #mocha-stats {\n            position: absolute;\n        }\n        #mocha ul {\n            max-width: initial;\n            margin: initial !important;\n            text-align: initial;\n        }\n\n        div {\n            position: static;\n        }\n\n        /* FOLDOUT MENU CSS */\n\n        #fcc_foldout_menu {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 320px;\n            height: 195px;\n            border-bottom-right-radius: 5px;\n            background-color: rgba(255, 255, 204, 0.6);\n            z-index: 99997;\n            font-family: Noto Sans, arial, sans-serif !important;\n            box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.6);\n            transition: .5s;\n        }\n        input[type=checkbox]:checked ~ #fcc_foldout_menu {\n            left: -320px;\n            transition: .5s ease-in-out;\n        }\n        #fcc_foldout_menu_inner {\n            position: relative;\n        }\n        input[type=checkbox] {\n            height: 24px;\n            width: 25px;\n            position: fixed;\n            top: 7px;\n            left: 20px;\n            border: 1px solid black;\n            opacity: 0;\n            cursor: pointer;\n            z-index: 99999;\n        }\n        #fcc_foldout_toggler {\n            position: absolute;\n            top: 20px;\n            left: 20px;\n            z-index: 99998;\n        }\n\n        .transform_top {\n            opacity: 1;\n            transform: rotate(45deg) translate(-2px, -1px);\n        }\n        .transform_middle {\n            opacity: 0;\n            transform: rotate(0deg) scale(0.2, 0.2);\n        }\n        .transform_bottom {\n            opacity: 1;\n            transform: rotate(-45deg) translate(-1px, -1px);\n        }\n\n        .fcc_hamburger {\n            position: relative;\n            width: 25px;\n            height: 3px;\n            display: block;\n            background: black;\n            border-radius: 5px;\n            content: '';\n            transform-origin: 4px 0px;\n            transition: transform 0.4s ease, opacity 0.55s ease;\n        }\n        #hamburger_top {\n            position: absolute;\n            top: -6px;\n            transform-origin: 0% 80%;\n        }\n        #hamburger_bottom {\n            position: absolute;\n            bottom: -6px;\n            transform-origin: 20% 80%;\n        }\n\n        #fcc_foldout_menu label {\n            top: 38px;\n            left: 20px;\n            position: absolute;\n            font-size: 15px !important;\n        }\n        #fcc_foldout_menu select {\n            top: 61px;\n            left: 18px;\n            position: absolute;\n            font-family: Noto Sans, Arial, sans-serif !important;\n        }\n\n        .fcc_foldout_buttons {\n            position: absolute;\n            left: 20px;\n            height: 20px;\n            width: 110px;\n            padding: 10px !important;\n            display: block;\n            font-size: 15px !important;\n            line-height: 15px !important;\n            text-align: center;\n            border: none;\n            outline: none;\n            color: white;\n            background-color: rgba(128, 128, 128, 0.7);\n            border-radius: 4px;\n            box-sizing: content-box !important;\n            z-index: 0;\n            cursor: pointer;\n            box-shadow: 1px 1px 4px black;\n            font-family: Noto Sans, arial, sans-serif !important;\n        }\n        #fcc_test_message-box-rerun-button {\n            top: 88px;\n            transition: all .3s;\n        }\n        #fcc_test_message-box-rerun-button:hover {\n            color: white;\n            background-color: black;\n        }\n        #fcc_test_button {\n            top: 138px;\n        }\n        .fcc_test_btn-default {\n            background-color: rgba(128, 128, 128, 0.7);\n        }\n        .fcc_test_btn-executing {\n            background-color: rgba(255, 153, 0, 0.9);\n        }\n        .fcc_test_btn-error {\n            background-color: rgba(255, 0, 0, 0.7);\n        }\n        .fcc_test_btn-success {\n            background-color: rgba(81, 211, 81, 0.9);\n        }\n\n        #fcc_legend_wrapper {\n            position: absolute;\n            top: 95px;\n            left: 160px;\n            height: 400px;\n            width: 125px;\n            vertical-align: top;\n            text-align: left !important;\n            font-size: 15px;\n        }\n        #fcc_legend_wrapper span {\n            height: 15px;\n            margin-top: 6px !important;\n            font-size: 12px  !important;\n        }\n        .key {\n            height: 15px;\n            width: 15px;\n            margin: 5px !important;\n            vertical-align: top;\n        }\n        .key:first-of-type {\n            background-color: rgba(255, 0, 0, 0.7);\n        }\n        .key:nth-of-type(2) {\n            background-color: rgba(81, 211, 81, 0.9);\n        }\n        .key:nth-of-type(3) {\n            background-color: rgba(255, 153, 0, 0.9);\n        }\n        .fcc_legend {\n            position: relative;\n            display: inline-block;\n        }\n\n        #fcc_test_suite_indicator_wrapper {\n            position: fixed;\n            top: 15px;\n            right: 20px;\n        }\n        #fcc_test_suite_indicator {\n            position: fixed;\n            top: 15px;\n            right: 20px;\n            font-size: 12px !important;\n            background-color: rgba(255, 255, 204, 0.6);\n            padding: 3px 5px !important;\n            border-radius: 5px;\n            box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.6);\n            font-family: Noto Sans, arial, sans-serif !important;\n        }\n    </style>\n    <div id=\"fcc_test_suite_indicator_wrapper\"></div>\n    <div id=\"fcc_foldout_toggler\">\n        <span id=\"hamburger_top\" class=\"fcc_hamburger transform_top\"></span>\n        <span id=\"hamburger_middle\" class=\"fcc_hamburger transform_middle\"></span>\n        <span id=\"hamburger_bottom\" class=\"fcc_hamburger transform_bottom\"></span>\n    </div>\n    <input id=\"toggle\" onclick=\"FCC_Global.hamburger_transform()\" type=\"checkbox\" title=\"CTRL + SHIFT + O\">\n    <div id=\"fcc_foldout_menu\">\n        <div id=\"fcc_foldout_menu_inner\">\n            <label for=\"test-suite-selector\">Select Test Suite: </label>\n            <select name=\"Test Suite Selector\" id=\"test-suite-selector\" onchange=\"FCC_Global.selectProject(this.value)\">\n                <option id=\"placeholder\" value=\"\">- - -</option>\n                <option value=\"tribute-page\">Tribute Page</option>\n                <option value=\"portfolio\">Personal Portfolio</option>\n                <option value=\"survey-form\">Survey Form</option>\n                <option value=\"product-landing-page\">Product Landing Page</option>\n                <option value=\"technical-docs-page\">Technical Documentation Page</option>\n                <option value=\"random-quote-machine\">Random Quote Machine</option>\n                <option value=\"markdown-previewer\">Markdown Previewer</option>\n                <option value=\"drum-machine\">Drum Machine</option>\n                <option value=\"pomodoro-clock\">Pomodoro Clock</option>\n                <option value=\"javascript-calculator\">Javascript Calculator</option>\n                <option value=\"bar-chart\">D3: Bar Chart</option>\n                <option value=\"scatter-plot\">D3: Scatter Plot</option>\n                <option value=\"heat-map\">D3: Heat Map</option>\n                <option value=\"choropleth\">D3: Choropleth</option>\n                <option value=\"tree-map\">D3: Tree Map</option>\n            </select>\n            <button id=\"fcc_test_message-box-rerun-button\" type=\"button\" class=\"fcc_foldout_buttons\" title=\"CTRL + SHIFT + ENTER\" onclick=\"FCC_Global.FCCRerunTests()\">\n                Run Tests\n            </button>\n            <button id=\"fcc_test_button\" type=\"button\" class=\"fcc_foldout_buttons fcc_test_btn-default\" title=\"CTRL + SHIFT + T\" onclick=\"FCC_Global.FCCOpenTestModal()\">\n                Tests\n            </button>\n            <div id=\"fcc_legend_wrapper\">\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Test(s) Failed</span>\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Tests Passed</span>\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Tests Executing</span>\n            </div>\n        </div>\n    </div>\n    <div id=\"fcc_test_message-box\" class=\"fcc_test_message-box-hidden\" onclick=\"FCC_Global.FCCclickOutsideToCloseModal(event)\">\n        <div class=\"fcc_test_message-box-content\">\n            <div class=\"fcc_test_message-box-header\">\n                <div class=\"title\">Unit tests</div>\n            </div>\n            <div class=\"fcc_test_message-box-body\">\n                <div id=\"mocha\">Run Test Suite to See Unit Tests!</div>\n            </div>\n            <div class=\"fcc_test_message-box-footer\">\n                <div class=\"fcc_test_message-box-close-btn\" onclick=\"FCC_Global.FCCCloseTestModal()\">Close</div>\n            </div>\n        </div>\n    </div>";
+	var test_suite_skeleton = "\n    <style>\n        @import url('https://fonts.googleapis.com/css?family=Noto+Sans');\n\n        /* TEST/MESSAGE CENTER CSS */\n\n        #fcc_test_message-box {\n            font-size: 20px !important;\n            font-family: Noto Sans, arial, sans-serif !important;\n            position: fixed;\n            left: 0;\n            bottom: 0;\n            right: 0;\n            text-align: center;\n            background-color: rgba(0, 0, 0, 0.8) !important;\n            transition: all .5s;\n            z-index: 100000;\n            overflow: auto;\n        }\n\n        .fcc_test_message-box-hidden {\n            visibility: hidden;\n            opacity: 0;\n            top: -300px;\n        }\n\n        .fcc_test_message-box-shown {\n            visibility: visible;\n            opacity: 1;\n            top: 0;\n        }\n\n        .fcc_test_message-box-content {\n            position: relative;\n            color: black !important;\n            background-color: white !important;\n            top: 10vh;\n            width: 80%;\n            margin: 0 auto !important;\n            text-align: initial;\n            border-radius: 10px !important;\n            display: flex;\n            flex-direction: column;\n        }\n        .fcc_test_message-box-header,\n        .fcc_test_message-box-footer{\n            position: relative;\n            flex: none;\n            box-sizing: border-box !important;\n            padding: 10px !important;\n        }\n        .fcc_test_message-box-header {\n            border-bottom: 1px solid rgb(229,229,229);\n            height: 60px;\n        }\n\n        .fcc_test_message-box-header .title {\n            float: left;\n            font-size: 30px !important;\n            line-height: 40px !important;\n            margin-left: 10px !important;\n        }\n\n        .fcc_test_message-box-body {\n            flex: 1;\n        }\n\n        .fcc_test_message-box-footer {\n            border-top: 1px solid rgb(229,229,229);\n            height: 70px;\n        }\n\n        .fcc_test_message-box-close-btn {\n            float: right;\n            color: black;\n            background-color: white;\n            border: 1px solid rgb(229,229,229);\n            border-radius: 4px;\n            padding: 10px 20px !important;\n            margin-bottom: 10px;\n            transition: all .3s;\n        }\n        .fcc_test_message-box-close-btn:hover {\n            color: white;\n            background-color: black;\n        }\n\n        #mocha {\n            margin: 10px !important;\n        }\n        #mocha .test pre {\n            background-color: rgb(245, 245, 245) !important;\n        }\n        #mocha-stats {\n            position: absolute;\n        }\n        #mocha ul {\n            max-width: initial;\n            margin: initial !important;\n            text-align: initial;\n        }\n        #mocha * {\n          font-family: Noto Sans, arial, sans-serif !important;\n          border: none !important;\n        }\n\n        div {\n            position: static;\n        }\n\n        /* FOLDOUT MENU CSS */\n\n        #fcc_foldout_menu {\n            position: absolute;\n            top: 0;\n            left: 0;\n            width: 320px;\n            height: 210px;\n            border-radius: 0 !important;\n            border-bottom-right-radius: 5px !important;\n            background-color: rgba(255, 255, 204, 0.9) !important;\n            z-index: 99997;\n            font-family: Noto Sans, arial, sans-serif !important;\n            box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.6) !important;\n            transition: .5s;\n        }\n        #toggle:checked ~ #fcc_foldout_menu {\n            left: -320px;\n            transition: .5s ease-in-out;\n        }\n        #fcc_foldout_menu_inner {\n            position: relative;\n        }\n        #toggle {\n            height: 24px;\n            width: 25px;\n            position: fixed;\n            top: 7px;\n            left: 20px;\n            opacity: 0;\n            cursor: pointer;\n            z-index: 99999;\n        }\n        #fcc_foldout_toggler {\n            position: absolute;\n            top: 20px;\n            left: 20px;\n            z-index: 99998;\n        }\n\n        .transform_top {\n            opacity: 1;\n            transform: rotate(45deg) translate(-2px, -1px);\n        }\n        .transform_middle {\n            opacity: 0;\n            transform: rotate(0deg) scale(0.2, 0.2);\n        }\n        .transform_bottom {\n            opacity: 1;\n            transform: rotate(-45deg) translate(-1px, -1px);\n        }\n\n        .fcc_hamburger {\n            position: relative;\n            width: 25px;\n            height: 3px;\n            display: block;\n            background: black !important;\n            border-radius: 5px !important;\n            transform-origin: 4px 0px;\n            transition: transform 0.4s ease, opacity 0.55s ease;\n        }\n        #hamburger_top {\n            position: absolute;\n            top: -6px;\n            transform-origin: 0% 80%;\n        }\n        #hamburger_bottom {\n            position: absolute;\n            bottom: -6px;\n            transform-origin: 20% 80%;\n        }\n\n        #fcc_foldout_menu label {\n            top: 38px;\n            left: 20px;\n            position: absolute;\n            font-size: 15px !important;\n            color: black !important;\n        }\n        #fcc_foldout_menu select {\n            top: 61px;\n            left: 18px;\n            position: absolute;\n            font-size: 12px !important;\n            font-family: Noto Sans, Arial, sans-serif !important;\n        }\n\n        .fcc_foldout_buttons {\n            position: absolute;\n            left: 20px;\n            height: 20px;\n            width: 110px;\n            padding: 10px !important;\n            display: block;\n            font-size: 15px !important;\n            line-height: 15px !important;\n            text-align: center;\n            border: none !important;\n            outline: none !important;\n            color: white;\n            background-color: rgba(128, 128, 128, 0.7);\n            border-radius: 4px;\n            box-sizing: content-box !important;\n            z-index: 0;\n            cursor: pointer;\n            box-shadow: 1px 1px 4px black;\n            font-family: Noto Sans, arial, sans-serif !important;\n        }\n        #fcc_test_message-box-rerun-button {\n            top: 90px;\n            transition: all .3s;\n        }\n        #fcc_test_message-box-rerun-button:hover {\n            color: white;\n            background-color: black;\n        }\n        #fcc_test_button {\n            top: 140px;\n        }\n        .fcc_test_btn-default {\n            background-color: rgba(128, 128, 128, 0.7);\n        }\n        .fcc_test_btn-executing {\n            background-color: rgba(255, 153, 0, 0.9);\n        }\n        .fcc_test_btn-error {\n            background-color: rgba(255, 0, 0, 0.7);\n        }\n        .fcc_test_btn-success {\n            background-color: rgba(81, 211, 81, 0.9);\n        }\n        #fcc_report-bug {\n          position: absolute;\n          top: 186px;\n          left: 20px;\n          width: 110px;\n          padding: 0 10px !important;\n          font-size: 12px !important;\n          text-align: center;\n        }\n\n        #fcc_legend_wrapper {\n            position: absolute;\n            top: 95px;\n            left: 160px;\n            width: 125px;\n            vertical-align: top;\n            text-align: left !important;\n            font-size: 15px !important;\n            background: none !important;\n        }\n        #fcc_legend_wrapper span {\n            height: 15px;\n            margin-top: 6px !important;\n            font-size: 12px  !important;\n            color: black !important;\n            background: none !important;\n        }\n        .key {\n            height: 15px;\n            width: 15px;\n            margin: 5px !important;\n            vertical-align: top;\n            border-radius: 0 !important;\n        }\n        .key:first-of-type {\n            background-color: rgba(255, 0, 0, 0.7);\n        }\n        .key:nth-of-type(2) {\n            background-color: rgba(81, 211, 81, 0.9);\n        }\n        .key:nth-of-type(3) {\n            background-color: rgba(255, 153, 0, 0.9);\n        }\n        .fcc_legend {\n            position: relative;\n            display: inline-block;\n        }\n\n        #fcc_test_suite_indicator_wrapper {\n            position: fixed;\n            top: 15px;\n            right: 20px;\n        }\n        #fcc_test_suite_indicator {\n            position: fixed;\n            top: 15px;\n            right: 20px;\n            font-size: 12px !important;\n            background-color: rgba(255, 255, 204, 0.9) !important;\n            color: black !important;\n            padding: 3px 5px !important;\n            border-radius: 5px !important;\n            box-shadow: 1px 1px 10px rgba(128, 128, 128, 0.6) !important;\n            font-family: Noto Sans, arial, sans-serif !important;\n        }\n\n    </style>\n    <div id=\"fcc_test_suite_indicator_wrapper\"></div>\n    <div id=\"fcc_foldout_toggler\">\n        <span id=\"hamburger_top\" class=\"fcc_hamburger transform_top\"></span>\n        <span id=\"hamburger_middle\" class=\"fcc_hamburger transform_middle\"></span>\n        <span id=\"hamburger_bottom\" class=\"fcc_hamburger transform_bottom\"></span>\n    </div>\n    <input id=\"toggle\" onclick=\"FCC_Global.hamburger_transform()\" type=\"checkbox\" title=\"CTRL + SHIFT + O\">\n    <div id=\"fcc_foldout_menu\">\n        <div id=\"fcc_foldout_menu_inner\">\n            <label for=\"test-suite-selector\">Select Test Suite: </label>\n            <select name=\"Test Suite Selector\" id=\"test-suite-selector\" onchange=\"FCC_Global.selectProject(this.value)\">\n                <option id=\"placeholder\" value=\"\">- - -</option>\n                <option value=\"tribute-page\">Tribute Page</option>\n                <option value=\"portfolio\">Personal Portfolio</option>\n                <option value=\"survey-form\">Survey Form</option>\n                <option value=\"product-landing-page\">Product Landing Page</option>\n                <option value=\"technical-docs-page\">Technical Documentation Page</option>\n                <option value=\"random-quote-machine\">Random Quote Machine</option>\n                <option value=\"markdown-previewer\">Markdown Previewer</option>\n                <option value=\"drum-machine\">Drum Machine</option>\n                <option value=\"pomodoro-clock\">Pomodoro Clock</option>\n                <option value=\"javascript-calculator\">Javascript Calculator</option>\n                <option value=\"bar-chart\">D3: Bar Chart</option>\n                <option value=\"scatter-plot\">D3: Scatter Plot</option>\n                <option value=\"heat-map\">D3: Heat Map</option>\n                <option value=\"choropleth\">D3: Choropleth</option>\n                <option value=\"tree-map\">D3: Tree Map</option>\n            </select>\n            <button id=\"fcc_test_message-box-rerun-button\" type=\"button\" class=\"fcc_foldout_buttons\" title=\"CTRL + SHIFT + ENTER\" onclick=\"FCC_Global.FCCRerunTests()\">\n                Run Tests\n            </button>\n            <button id=\"fcc_test_button\" type=\"button\" class=\"fcc_foldout_buttons fcc_test_btn-default\" title=\"CTRL + SHIFT + T\" onclick=\"FCC_Global.FCCOpenTestModal()\">\n                Tests\n            </button>\n            <div id=\"fcc_legend_wrapper\">\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Test(s) Failed</span>\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Tests Passed</span>\n                    <div class=\"fcc_legend key\"></div><span class=\"fcc_legend\">Tests Executing</span>\n            </div>\n            <span id=\"fcc_report-bug\"><a href=\"https://github.com/freeCodeCamp/testable-projects-fcc/issues/new\" target=\"_blank\">Report Bug</a></span>\n        </div>\n    </div>\n    <div id=\"fcc_test_message-box\" class=\"fcc_test_message-box-hidden\" onclick=\"FCC_Global.FCCclickOutsideToCloseModal(event)\">\n        <div class=\"fcc_test_message-box-content\">\n            <div class=\"fcc_test_message-box-header\">\n                <div class=\"title\">Unit tests</div>\n            </div>\n            <div class=\"fcc_test_message-box-body\">\n                <div id=\"mocha\">Run Test Suite to See Unit Tests!</div>\n            </div>\n            <div class=\"fcc_test_message-box-footer\">\n                <div class=\"fcc_test_message-box-close-btn\" onclick=\"FCC_Global.FCCCloseTestModal()\">Close</div>\n            </div>\n        </div>\n    </div>";
 
 	exports.default = test_suite_skeleton;
 
@@ -19010,6 +19013,11 @@ var FCC_Global =
 	// DRUM MACHINE TESTS:
 	function createDrumMachineTests() {
 
+	    var isChrome = !!window.chrome && !!window.chrome.webstore;
+	    if (isChrome === false) {
+	        FCC_Global.alertOnce('Drum Machine Alert', 'Some Drum Machine tests may fail in browsers other than Chrome');
+	    }
+
 	    describe('#Drum Machine tests', function () {
 
 	        // vars:
@@ -19031,18 +19039,18 @@ var FCC_Global =
 
 	            it('1. I should be able to see an outer container with a corresponding id="drum-machine" that contains ' + 'all other elements', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("drum-machine"));
-	                FCC_Global.assert(document.querySelectorAll('#drum-machine div, #drum-machine .drum-pad, #drum-machine #display, \n          #drum-machine .clip').length, 'The #drum-machine element must contain other elements ');
+	                FCC_Global.assert(document.querySelectorAll('#drum-machine div, #drum-machine .drum-pad, #drum-machine #display,\n          #drum-machine .clip').length, 'The #drum-machine element must contain other elements ');
 	            });
 
 	            it('2. Within #drum-machine I can see an element with corresponding id="display".', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("display"));
 	            });
 
-	            it('3. Within #drum-machine I can see 9 clickable "drum pad" elements, each with a class name of "drum-pad", ' + 'a unique id that describes the audio clip the drum pad will be set up to trigger, and an inner text that ' + 'corresponds to one of the following keys on the keyboard: Q, W, E, A, S. D, Z, X, C.', function () {
+	            it('3. Within #drum-machine I can see 9 clickable "drum pad" elements, each with a class name of "drum-pad", ' + 'a unique id that describes the audio clip the drum pad will be set up to trigger, and an inner text that ' + 'corresponds to one of the following keys on the keyboard: Q, W, E, A, S, D, Z, X, C. The drum pads MUST be in this order.', function () {
 	                // using .isAtLeast() and .includeMembers() in this challenge so that users have the freedom to add more than 9 drum pads
 	                var drumPadInnerText = [];
 	                drumPads.forEach(function (pad) {
-	                    drumPadInnerText.push(pad.innerText);
+	                    drumPadInnerText.push(pad.innerText.replace(/\s/g, ''));
 	                    FCC_Global.assert.strictEqual(pad.hasAttribute('id'), true, 'Each .drum-pad element must have an id attribute ');
 	                });
 	                FCC_Global.assert.isAtLeast(drumPads.length, 9, 'There should be at least 9 elements with the class "drum-pad" ');
@@ -19057,7 +19065,7 @@ var FCC_Global =
 	                    FCC_Global.assert.strictEqual(el.nodeName, 'AUDIO', 'Each .clip element should be an HTML5 <audio> element ');
 	                    FCC_Global.assert.strictEqual(el.hasAttribute('src'), true, 'Each <audio> element should have a "src" attribute ');
 	                    FCC_Global.assert.strictEqual(el.hasAttribute('id'), true, 'Each <audio> element should have an "id" attribute ');
-	                    FCC_Global.assert.strictEqual(el.id, el.parentElement.innerText, 'Each <audio> element should have an id equal ' + 'to its parent .drum-pad\'s inner-text ');
+	                    FCC_Global.assert.strictEqual(el.id, el.parentElement.innerText.replace(/\s/g, ''), 'Each <audio> element should have an id equal ' + 'to its parent .drum-pad\'s inner-text ');
 	                });
 	            });
 
@@ -19084,7 +19092,7 @@ var FCC_Global =
 	                });
 	            });
 
-	            it('7. When a .drum-pad is triggered, a string describing the associated audio clip is displayed as ' + 'the inner text of the .display element (each string must be unique).', function () {
+	            it('7. When a .drum-pad is triggered, a string describing the associated audio clip is displayed as ' + 'the inner text of the #display element (each string must be unique).', function () {
 	                this.timeout(900);
 	                var displayText = [];
 	                return new Promise(function (resolve, reject) {
@@ -19099,7 +19107,7 @@ var FCC_Global =
 	                        if (displayText.length === 1) {
 	                            resolve();
 	                        } else {
-	                            reject("Each time a drum pad is triggered, a unique string should be displayed in the " + "element with the id 'display' ");
+	                            reject(new Error("Each time a drum pad is triggered, a unique string should be displayed in the " + "element with the id 'display' "));
 	                        }
 	                    }, 800);
 	                });
@@ -19110,7 +19118,7 @@ var FCC_Global =
 
 /***/ },
 /* 45 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 
@@ -19118,13 +19126,6 @@ var FCC_Global =
 	    value: true
 	});
 	exports.default = createMarkdownPreviewerTests;
-
-	var _jquery = __webpack_require__(1);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	function createMarkdownPreviewerTests() {
 
 	    describe('Markdown Previewer tests', function () {
@@ -19140,75 +19141,73 @@ var FCC_Global =
 	        function triggerChange(str) {
 	            // REACT
 	            editor.value = str;
-	            var event = new Event('input', { bubbles: true });
-	            editor.dispatchEvent(event);
-	            // jQUERY OR JAVASCRIPT
+	            var eventReact = new Event('input', { bubbles: true });
+	            editor.dispatchEvent(eventReact);
 	            if (preview.innerHTML === str) {
 	                return;
 	            } else {
-	                (0, _jquery2.default)('#editor').trigger(_jquery2.default.Event('keyup', { which: 13 })); // must be keyup to live preview
-	                if (preview.innerHTML === str) {
-	                    return;
-	                }
+	                // jQUERY OR JAVASCRIPT
+	                var eventJS = new Event('keyup', { bubbles: true }); // must be keyup to live preview
+	                editor.dispatchEvent(eventJS);
 	            }
 	        }
 
 	        describe('#Tests', function () {
 
-	            it('1. I can see a <textarea> element with corresponding id="editor".', function () {
+	            it('1. I can see a <textarea> element with corresponding id="editor"', function () {
 	                FCC_Global.assert.isNotNull(editor, '#editor is not defined ');
 	                FCC_Global.assert.strictEqual(editor.nodeName, 'TEXTAREA', '#editor should be a <textarea> element ');
 	            });
 
-	            it('2. I can see an element with corresponding id="preview".', function () {
+	            it('2. I can see an element with corresponding id="preview"', function () {
 	                FCC_Global.assert.isNotNull(preview, '#preview is not defined ');
 	            });
 
-	            it('3. When I enter text into the #editor element, the #preview element is updated as I type to ' + 'display the content of the textarea.', function () {
+	            it('3. When I enter text into the #editor element, the #preview element is updated as I type to display the content of the textarea', function () {
 	                triggerChange('a');
-	                FCC_Global.assert.strictEqual(preview.innerText.slice(0, 1), 'a', '#preview is not being updated as I type ' + 'into #editor (should update on every keyup) ');
+	                FCC_Global.assert.strictEqual(preview.innerText.slice(0, 1), 'a', '#preview is not being updated as I type into #editor (should update on every keyup) ');
 	            });
 
-	            it('3. When I enter GitHub flavored markdown into the #editor element, the text is rendered as ' + 'HTML to #preview as I type (Hint: You don\'t need to parse Markdown yourself - you can ' + 'import the Marked library for this: https://cdnjs.com/libraries/marked).', function () {
+	            it('4. When I enter GitHub flavored markdown into the #editor element, the text is rendered as HTML to #preview as I type (Hint: You don\'t need to parse Markdown yourself - you can import the Marked library for this: https://cdnjs.com/libraries/marked)', function () {
+	                var error = 'The markdown in #editor is not being interpreted  correctly and/or rendered into #preview ';
 	                triggerChange('');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, '', '#preview\'s only children should be those rendered ' + 'by marked.js ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, '', '#preview\'s only children should be those rendered by marked.js ');
 	                triggerChange('testing');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p>testing</p>\n', 'The markdown in #editor is not ' + 'being interpreted  correctly and/or rendered into #preview ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p>testing</p>\n', error);
 	                triggerChange(editor.value + ' and...');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p>testing and...</p>\n', 'The markdown in #editor ' + 'is not being interpreted  correctly and/or rendered into #preview ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p>testing and...</p>\n', error);
 	                triggerChange('# h1 \n## h2');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, '<h1 id="h1">h1</h1>\n<h2 id="h2">h2</h2>\n', 'The ' + 'markdown in #editor is not being interpreted  correctly and/or ' + 'rendered into #preview ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, '<h1 id="h1">h1</h1>\n<h2 id="h2">h2</h2>\n', error);
 	                triggerChange('**bold**');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p><strong>bold</strong></p>\n', 'The markdown ' + 'in #editor is not being interpreted  correctly and/or rendered ' + 'into #preview ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, '<p><strong>bold</strong></p>\n', error);
 	            });
 
-	            it('4. When my markdown previewer first loads, the #editor field should contain valid default ' + 'markdown that provides a brief description of the project and demonstrates the ' + 'previewer\'s capabilities.', function () {
+	            it('5. When my markdown previewer first loads, the #editor field should contain valid default markdown that provides a brief description of the project and demonstrates the previewer\'s capabilities', function () {
 	                FCC_Global.assert.notStrictEqual(markdownOnLoad, undefined);
 	                FCC_Global.assert.notStrictEqual(markdownOnLoad, '', '#editor should contain some text ');
 	            });
 
-	            it('5. When my markdown previewer first loads, the default text in the #editor field should ' + 'contain valid markdown that represents at least one of each of the following elements: ' + 'a header (H1 size), a sub header (H2 size), a link, inline code, a code block, a list ' + 'item, a blockquote, an image, and bolded text.', function () {
+	            it('6. When my markdown previewer first loads, the default text in the #editor field should contain valid markdown that represents at least one of each of the following elements: a header (H1 size), a sub header (H2 size), a link, inline code, a code block, a list item, a blockquote, an image, and bolded text', function () {
 	                triggerChange(markdownOnLoad);
 	                var markdown = editor.value;
 
-	                FCC_Global.assert.notStrictEqual(markdown.search(/#\s.+/), -1, 'write some markdown representing an <h1> '); // h1  
+	                FCC_Global.assert.notStrictEqual(markdown.search(/#\s.+/), -1, 'write some markdown representing an <h1> '); // h1
 	                FCC_Global.assert.notStrictEqual(markdown.search(/##\s.+/), -1, 'write some markdown representing an <h2> '); // h2
 	                FCC_Global.assert.notStrictEqual(markdown.search(/\[.+\]\(.+\..+\)/), -1, 'write some markdown representing an <a> '); // link
 	                FCC_Global.assert.notStrictEqual(markdown.search(/`.+`/), -1, 'write some markdown representing inline <code> '); // inline code
-	                FCC_Global.assert.notStrictEqual(markdown.search(/```[^]+```/), -1, 'write some markdown representing a codeblock, i.e. ' + '<pre><code>...</code></pre> '); // codeblock
+	                FCC_Global.assert.notStrictEqual(markdown.search(/```[^]+```/), -1, 'write some markdown representing a codeblock, i.e. <pre><code>...</code></pre> '); // codeblock
 	                FCC_Global.assert.notStrictEqual(markdown.search(/(?:-|\d\.)\s[^|\s-*].+/), -1, 'write some markdown representing an <li> item '); // ol or ul list item
-	                FCC_Global.assert.notStrictEqual(markdown.search(/>\s.+/), -1, 'write some markdown representing an <h1> '); // blockquote
-	                FCC_Global.assert.notStrictEqual(markdown.search(/!\[.*\]\(.+\..+\)/), -1, 'write some markdown representing an <h1> '); // image
-	                FCC_Global.assert.notStrictEqual(markdown.search(/(\*\*|__).+\1/), -1, 'write some markdown representing an <h1> '); // bold text        
+	                FCC_Global.assert.notStrictEqual(markdown.search(/>\s.+/), -1, 'write some markdown representing a <blockquote> '); // blockquote
+	                FCC_Global.assert.notStrictEqual(markdown.search(/!\[.*\]\(.+\..+\)/), -1, 'write some markdown representing an <image> '); // image
+	                FCC_Global.assert.notStrictEqual(markdown.search(/(\*\*|__).+\1/), -1, 'write some markdown representing <strong> text '); // bold text
 	            });
 
-	            it('6. When my markdown previewer first loads, the default markdown in the #editor field ' + 'should be rendered as HTML in the #preview element.', function () {
+	            it('7. When my markdown previewer first loads, the default markdown in the #editor field should be rendered as HTML in the #preview element', function () {
 	                triggerChange(markdownOnLoad);
-	                console.log(previewOnLoad);
 	                FCC_Global.assert.notStrictEqual(preview.innerHTML, '', '#preview should have inner HTML ');
-	                FCC_Global.assert.strictEqual(preview.innerHTML, previewOnLoad, '#editor\'s  markdown does not render ' + 'correctly on window load ');
+	                FCC_Global.assert.strictEqual(preview.innerHTML, previewOnLoad, '#editor\'s  markdown does not render correctly on window load ');
 	                var markdown = editor.value;
-
+	                // this could be significantly shortened into one test, however feedback would not be specific
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#preview h1').length, 1, '#preview does not contain at least one <h1> ');
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#preview h2').length, 1, '#preview does not contain at least one <h2> ');
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#preview a').length, 1, '#preview does not contain at least one <a> ');
@@ -19219,7 +19218,7 @@ var FCC_Global =
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#preview img').length, 1, '#preview does not contain at least one <img> ');
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#preview strong').length, 1, '#preview does not contain at least one <strong> ');
 
-	                // then check a couple of elements to make sure the present elements 
+	                // then check a couple of elements to make sure the present elements
 	                //are actually the ones represented by the markdown:
 
 	                // find matching H1 element
@@ -19228,18 +19227,18 @@ var FCC_Global =
 	                document.querySelectorAll('#preview h1').forEach(function (h1) {
 	                    if (h1.innerText === h1Text) h1Match.push(h1);
 	                });
-	                FCC_Global.assert.isAtLeast(h1Match.length, 1, '#preview does not contain the H1 element ' + 'represented by the markdown in the #editor field with the inner text ' + h1Text + ' ');
+	                FCC_Global.assert.isAtLeast(h1Match.length, 1, '#preview does not contain the H1 element represented by the markdown in the #editor field with the inner text ' + h1Text + ' ');
 
-	                // find mathcing H2 element 
+	                // find matching H2 element 
 	                var h2Text = /##\s.*/.exec(markdown)[0].slice(3);
 	                var h2Match = [];
 	                document.querySelectorAll('#preview h2').forEach(function (h2) {
 	                    if (h2.innerText === h2Text) h2Match.push(h2);
 	                });
-	                FCC_Global.assert.isAtLeast(h2Match.length, 1, '#preview does not contain the H2 element ' + 'represented by the markdown in the #editor field with the inner text ' + h2Text + ' ');
+	                FCC_Global.assert.isAtLeast(h2Match.length, 1, '#preview does not contain the H2 element represented by the markdown in the #editor field with the inner text ' + h2Text + ' ');
 	            });
 
-	            it('7. OPTIONAL BONUS: When I click a link rendered by my markdown previewer, the link is ' + 'opened up in a new tab (HINT: read the Marked.js docs for this one!).', function () {
+	            it('8. OPTIONAL BONUS: When I click a link rendered by my markdown previewer, the link is opened up in a new tab (HINT: read the Marked.js docs for this one!)', function () {
 	                var links = document.querySelectorAll('#preview a');
 	                var linksWithTarget_Blank = [];
 	                links.forEach(function (a) {
@@ -19249,7 +19248,7 @@ var FCC_Global =
 	                });
 	            });
 
-	            it('8. OPTIONAL BONUS: My markdown previewer interprets carriage returns and renders ' + 'them as line break.', function () {
+	            it('9. OPTIONAL BONUS: My markdown previewer interprets carriage returns and renders them as line break', function () {
 	                // see marked.js options for this and more cool features
 	            });
 	        }); // END #Tests
@@ -19318,98 +19317,98 @@ var FCC_Global =
 	            });
 
 	            it("2. My calculator should contain 10 clickable elements containing one number each from 0-9, with the following corresponding IDs: id=\"zero\", id=\"one\", id=\"two\", id=\"three\", id=\"four\", id=\"five\", id=\"six\", id=\"seven\", id=\"eight\", and id=\"nine\"", function () {
-	                FCC_Global.assert.isNotNull(document.getElementById(_0));
-	                FCC_Global.assert.isNotNull(document.getElementById(_1));
-	                FCC_Global.assert.isNotNull(document.getElementById(_2));
-	                FCC_Global.assert.isNotNull(document.getElementById(_3));
-	                FCC_Global.assert.isNotNull(document.getElementById(_4));
-	                FCC_Global.assert.isNotNull(document.getElementById(_5));
-	                FCC_Global.assert.isNotNull(document.getElementById(_6));
-	                FCC_Global.assert.isNotNull(document.getElementById(_7));
-	                FCC_Global.assert.isNotNull(document.getElementById(_8));
-	                FCC_Global.assert.isNotNull(document.getElementById(_9));
+	                FCC_Global.assert.isNotNull(document.getElementById(_0), 'id="zero" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_1), 'id="one" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_2), 'id="two" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_3), 'id="three" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_4), 'id="four" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_5), 'id="five" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_6), 'id="six" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_7), 'id="seven" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_8), 'id="eight" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_9), 'id="nine" is not yet defined ');
 	            });
 
 	            it("3. My calculator should contain 4 clickable elements each containing one of the 4 primary mathematical operators with the following corresponding IDs: id=\"add\", id=\"subtract\", id=\"multiply\", id=\"divide\"", function () {
-	                FCC_Global.assert.isNotNull(document.getElementById(_plus));
-	                FCC_Global.assert.isNotNull(document.getElementById(_min));
-	                FCC_Global.assert.isNotNull(document.getElementById(_x));
-	                FCC_Global.assert.isNotNull(document.getElementById(_div));
+	                FCC_Global.assert.isNotNull(document.getElementById(_plus), 'id="add" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_min), 'id="subtract" is not yet defined ');
+	                FCC_Global.assert.isNotNull(document.getElementById(_x)), 'id="multiply" is not yet defined ';
+	                FCC_Global.assert.isNotNull(document.getElementById(_div), 'id="divide" is not yet defined ');
 	            });
 
 	            it("4. My calculator should contain a clickable element containing a . with a corresponding id=\"decimal\"", function () {
-	                FCC_Global.assert.isNotNull(document.getElementById(_dec));
+	                FCC_Global.assert.isNotNull(document.getElementById(_dec), 'id="decimal" is not yet defined ');
 	            });
 
 	            it("5. My calculator should contain a clickable element with an id=\"clear\"", function () {
-	                FCC_Global.assert.isNotNull(document.getElementById(_AC));
+	                FCC_Global.assert.isNotNull(document.getElementById(_AC)), 'id="clear" is not yet defined ';
 	            });
 
 	            it("6. My calculator should contain an element to display values with a corresponding id=\"display\"", function () {
-	                FCC_Global.assert.isNotNull(document.getElementById("display"));
+	                FCC_Global.assert.isNotNull(document.getElementById("display"), 'id="display" is not yet defined ');
 	            });
 
-	            it("7. At any time, pressing the clear button clears the input and output values, and returns the calculator to its initialized state. 0 should be shown in the element with the id of \"display\".", function () {
+	            it("7. At any time, pressing the clear button clears the input and output values, and returns the calculator to its initialized state; 0 should be shown in the element with the id of \"display\"", function () {
 	                clickButtonsById([_5, _x, _1, _plus, _5, _plus, _9, _2, _eq, _AC]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "0");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "0", 'Element with with id="display" should show 0 ');
 	            });
 
 	            it("8. As I input numbers, I should be able to see my input in the element with the id of \"display\"", function () {
 	                clickButtonsById([_1, _2, _3]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "123");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "123", 'Numbers do not display correctly within id="display" ');
 	            });
 
 	            it("9. In any order, I should be able to add, subtract, multiply and divide a chain of numbers of any length, and when I hit =, the correct result should be shown in the element with the id of \"display\"", function () {
 	                clickButtonsById([_3, _plus, _5, _x, _6, _min, _2, _div, _4, _eq]);
-	                FCC_Global.assert(document.getElementById("display").innerHTML === "32.5" || document.getElementById("display").innerHTML === "11.5", "Equation should produce 32.5 or 11.5 as an answer, depening on the logic your calculator uses (formula vs. immediate execution)");
+	                FCC_Global.assert(document.getElementById("display").innerHTML === "32.5" || document.getElementById("display").innerHTML === "11.5", "The expression 3 + 5 * 6 - 2 / 4 should produce 32.5 or 11.5 as an answer, depending on the logic your calculator uses (formula vs. immediate execution) ");
 	            });
 
 	            it("10. When inputting numbers, my calculator should not allow a number to begin with multiple zeros.", function () {
 	                clickButtonsById([_0, _0, _0]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "0");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "0", 'An input of 0 0 0 should display 0 ');
 	            });
 
-	            it("11. When the decimal element is clicked, a . should append to the currently displayed value. Two .s in one number should not be accepted.", function () {
+	            it("11. When the decimal element is clicked, a . should append to the currently displayed value; two .s in one number should not be accepted", function () {
 	                clickButtonsById([_5, _dec, _dec, _0]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5.0");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5.0", 'An input of 5 . . 0 should display 5.0 ');
 	                clearDisplay();
 	                clickButtonsById([_5, _dec, _5, _dec, _5]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5.55");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5.55", 'An input of 5 . 5 . 5 should display 5.55 ');
 	            });
 
-	            it("12. I should be able to perform any operation (+, -, *, /) on numbers containing decimal points.", function () {
+	            it("12. I should be able to perform any operation (+, -, *, /) on numbers containing decimal points", function () {
 	                clickButtonsById([_1, _0, _dec, _5, _min, _5, _dec, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "5", 'The expression 10.5 - 5.5 should produce an output of 5 ');
 	                clearDisplay();
 	                clickButtonsById([_5, _x, _5, _dec, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "27.5");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "27.5", 'The expression 5 * 5.5 should produce an output of 27.5 ');
 	                clearDisplay();
 	                clickButtonsById([_1, _0, _dec, _5, _plus, _5, _dec, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "16");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "16", 'The expression 10.5 + 5.5 should produce an output of 16 ');
 	                clearDisplay();
 	                clickButtonsById([_1, _0, _div, _2, _dec, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "4");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "4", 'The expression 10 / 2.5 should produce an output of 4 ');
 	            });
 
-	            it("13. If 2 or more operators are entered consecutively, the operation performed should be the last operator entered.", function () {
+	            it("13. If 2 or more operators are entered consecutively, the operation performed should be the last operator entered", function () {
 	                clickButtonsById([_5, _x, _min, _plus, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "10");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "10", 'The sequence 5 * - + 5 = should produce an output of 10 ');
 	                clearDisplay();
 	                clickButtonsById([_5, _plus, _plus, _5, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "10");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "10", 'The sequence 5 + + 5 = should produce an output of 10 ');
 	            });
 
-	            it("14. Pressing an operator immediately following = should start a new calculation that operates on the result of the previous evaluation.", function () {
+	            it("14. Pressing an operator immediately following = should start a new calculation that operates on the result of the previous evaluation", function () {
 	                clickButtonsById([_5, _min, _2, _eq, _div, _2, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "1.5");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "1.5", 'The sequence 5 - 2 = / 2 = should produce an output of 1.5 ');
 	                clearDisplay();
 	                clickButtonsById([_5, _plus, _5, _eq, _plus, _3, _eq]);
-	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "13");
+	                FCC_Global.assert.strictEqual(document.getElementById("display").innerHTML, "13", 'The sequence 5 + 3 = + 3 = should produce an output of 13 ');
 	            });
 
-	            it("15. My calculator should have several decimal places of precision when it comes to rounding (note that there is no exact standard, but you should be able to handle calculations like 2 / 7 with reasonable precision to at least 4 decimal places).", function () {
+	            it("15. My calculator should have several decimal places of precision when it comes to rounding (note that there is no exact standard, but you should be able to handle calculations like 2 / 7 with reasonable precision to at least 4 decimal places)", function () {
 	                clickButtonsById([_2, _div, _7, _eq]);
-	                FCC_Global.assert.isOk(/0?\.2857\d*/.test(document.getElementById("display").innerHTML));
+	                FCC_Global.assert.isOk(/0?\.2857\d*/.test(document.getElementById("display").innerHTML), 'The expression 2 / 7 should produce an output number with at least 4 decimal places of precision ');
 	            });
 	        }); // END #Tests
 	    }); // END Calculator Tests
@@ -19433,6 +19432,7 @@ var FCC_Global =
 	    var _sesh_plus = "session-increment";
 	    var _reset = "reset";
 	    var _start_stop = "start_stop";
+	    var orignalTimerLabel = document.getElementById('timer-label').innerText;
 
 	    function getElements(elementIds) {
 	        return elementIds.map(function (elementId) {
@@ -19473,7 +19473,11 @@ var FCC_Global =
 	        });
 
 	        // configuration of the observer:
-	        var config = { childList: true, characterData: true, subtree: true };
+	        var config = {
+	            childList: true,
+	            characterData: true,
+	            subtree: true
+	        };
 
 	        // pass in the target node, as well as the observer options
 	        observer.observe(target, config);
@@ -19482,7 +19486,7 @@ var FCC_Global =
 	    }
 
 	    // We "Hack" the global setTimeout and setInterval functions so time elapses faster (delay is forced to 30ms)
-	    // Note: we should consider putting these hacks in the beforeEach function so every timed test can be done in less time   
+	    // Note: we should consider putting these hacks in the beforeEach function so every timed test can be done in less time
 	    // The problem is that we still don't know if it's acceptable to use this hack, because it implies forcing the campers to use setTimeout and setInterval functions to measure time in their pomodoro.
 	    var savedSetTimeout = window.setTimeout;
 	    var savedSetInterval = window.setInterval;
@@ -19503,8 +19507,17 @@ var FCC_Global =
 
 	    // Test suite
 	    describe("#Pomodoro Clock tests", function () {
+	        before(function () {
+	            clickButtonsById([_start_stop]);
+	        });
+
 	        beforeEach(function () {
 	            resetTimer();
+	            // We "Hack" the global setTimeout and setInterval functions so time elapses faster (delay is forced to 30ms)
+	            hackGlobalTimerFunctions();
+	        });
+
+	        afterEach(function () {
 	            restoreGlobalTimerFunctions();
 	        });
 
@@ -19550,10 +19563,6 @@ var FCC_Global =
 	                FCC_Global.assert.isAbove(timer_label.innerText.length, 0, "Element does not contain a string");
 	            });
 
-	            /*For now just confirm that element exists. Will test contents when timer is running later.
-	            If we force an initial value of 25:00, campers will then have to make the session length 
-	            buttons also update the intial value to reflect the change, which is complicated and not 
-	            necessarily needed. No time needs to be shown here until the timer is actually running.*/
 	            it("8. I can see an element with corresponding id=\"time-left\".", function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("time-left"));
 	            });
@@ -19567,30 +19576,42 @@ var FCC_Global =
 	            });
 
 	            it('11. When I click the element with the id of "reset", any running timer should be stopped, the value within id="break-length" should return to 5, the value within id="session-length" should return to 25, and the element with id="time-left" should reset to it\'s default state.', function () {
-	                this.timeout(4000);
+	                this.timeout(5000);
 	                // decrement session and break length
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                clickButtonsById(Array(60).fill(_break_min));
 	                // start the pomodoro
 	                clickButtonsById([_start_stop]);
 	                return new Promise(function (resolve, reject) {
-	                    // wait 1.5 seconds then reset and see if every default value is reset
-	                    setTimeout(function (_) {
-	                        // Reset the pomodoro
-	                        resetTimer();
-	                        var secondsAfterReset = getSeconds(document.getElementById("time-left").innerHTML);
-	                        // wait another 1.5 seconds to be sure value has not changed (pomodoro is stopped)
-	                        setTimeout(function (_) {
-	                            var breakLengthAfterResetIsCorrect = document.getElementById("break-length").innerHTML == 5;
-	                            var sessionLengthAfterResetIsCorrect = document.getElementById("session-length").innerHTML == 25;
-	                            if (!breakLengthAfterResetIsCorrect || !sessionLengthAfterResetIsCorrect) {
-	                                reject("Default values for break length and session length were not properly reset");
-	                                return;
-	                            }
-	                            var secondsAfterAWhile = getSeconds(document.getElementById("time-left").innerHTML);
-	                            if (secondsAfterReset === secondsAfterAWhile) resolve();else reject("Pomodoro has paused but time continued elapsing");
-	                        }, 1500);
-	                    }, 1500);
+	                    var timeLeft = document.getElementById("time-left");
+	                    var observer = observeElement("time-left", function (modType) {
+	                        if (timeLeft.innerHTML === "00:00") {
+	                            // once timer has reached zero wait 1.5 seconds then reset and see if every default value is reset
+	                            setTimeout(function (_) {
+	                                resetTimer();
+	                                var timerLabelAfterReset = document.getElementById('timer-label').innerText;
+	                                var secondsAfterReset = getSeconds(document.getElementById("time-left").innerHTML);
+
+	                                // see if timer label changed back
+	                                if (orignalTimerLabel !== timerLabelAfterReset) {
+	                                    reject(new Error("Default timer label was not properly reset"));
+	                                }
+
+	                                // wait another 1.5 seconds to be sure value has not changed (pomodoro is stopped)
+	                                setTimeout(function (_) {
+	                                    var breakLengthAfterResetIsCorrect = document.getElementById("break-length").innerHTML == 5;
+	                                    var sessionLengthAfterResetIsCorrect = document.getElementById("session-length").innerHTML == 25;
+	                                    if (!breakLengthAfterResetIsCorrect || !sessionLengthAfterResetIsCorrect) {
+	                                        reject(new Error("Default values for break length and session length were not properly reset"));
+	                                        return;
+	                                    }
+	                                    var secondsAfterAWhile = getSeconds(document.getElementById("time-left").innerHTML);
+	                                    if (secondsAfterReset === secondsAfterAWhile) resolve();else reject(new Error("Pomodoro has paused but time continued elapsing"));
+	                                }, 1500);
+	                            }, 1500);
+	                            observer.disconnect();
+	                        }
+	                    });
 	                });
 	            });
 
@@ -19628,18 +19649,18 @@ var FCC_Global =
 
 	            it('16. I should not be able to set a session or break length to <= 0.', function () {
 	                clickButtonsById(Array(10).fill(_break_min));
-	                FCC_Global.assert.strictEqual(document.getElementById("break-length").innerHTML, "1", 'Value in elment with ' + 'id of "break-length" is less than 1.');
+	                FCC_Global.assert.strictEqual(document.getElementById("break-length").innerHTML, "1", 'Value in element with ' + 'id of "break-length" is less than 1.');
 	                resetTimer();
 	                clickButtonsById(Array(30).fill(_sesh_min));
-	                FCC_Global.assert.strictEqual(document.getElementById("session-length").innerHTML, "1", 'Value in elment with ' + 'id of "session-length" is less than 1.');
+	                FCC_Global.assert.strictEqual(document.getElementById("session-length").innerHTML, "1", 'Value in element with ' + 'id of "session-length" is less than 1.');
 	            });
 
 	            it('17. I should not be able to set a session or break length to > 60.', function () {
 	                clickButtonsById(Array(60).fill(_break_plus));
-	                FCC_Global.assert.strictEqual(document.getElementById("break-length").innerHTML, "60", 'Value in elment with ' + 'id of "break-length" is greater than 60.');
+	                FCC_Global.assert.strictEqual(document.getElementById("break-length").innerHTML, "60", 'Value in element with ' + 'id of "break-length" is greater than 60.');
 	                resetTimer();
 	                clickButtonsById(Array(40).fill(_sesh_plus));
-	                FCC_Global.assert.strictEqual(document.getElementById("session-length").innerHTML, "60", 'Value in elment with ' + 'id of "session-length" is greater than 60.');
+	                FCC_Global.assert.strictEqual(document.getElementById("session-length").innerHTML, "60", 'Value in element with ' + 'id of "session-length" is greater than 60.');
 	            });
 
 	            it('18. When I first click the element with id="start_stop", the timer should begin running from the value currently displayed in id="session-length", even if the value has been incremented or decremented from the original value of 25.', function () {
@@ -19656,7 +19677,7 @@ var FCC_Global =
 	                    // wait 1.5 seconds then see if displayed time has changed (decremented)
 	                    setTimeout(function (_) {
 	                        var secondsAfter = getSeconds(document.getElementById("time-left").innerHTML);
-	                        if (secondsAfter > secondsBefore) resolve();else reject("Pomodoro has started but time displayed is not changing");
+	                        if (secondsAfter > secondsBefore) resolve();else reject(new Error("Pomodoro has started but time displayed is not changing"));
 	                    }, 1500);
 	                });
 	            });
@@ -19670,7 +19691,7 @@ var FCC_Global =
 	                    setTimeout(function (_) {
 	                        var secondsAfter = getSeconds(document.getElementById("time-left").innerHTML);
 	                        if (secondsAfter === secondsBefore) {
-	                            reject("Pomodoro has started but time displayed is not changing");
+	                            reject(new Error("Pomodoro has started but time displayed is not changing"));
 	                            return;
 	                        }
 	                        // Pause the pomodoro
@@ -19678,7 +19699,7 @@ var FCC_Global =
 	                        // wait another 1.5 seconds to be sure value has not changed
 	                        setTimeout(function (_) {
 	                            var secondsAfterPause = getSeconds(document.getElementById("time-left").innerHTML);
-	                            if (secondsAfter === secondsAfterPause) resolve();else reject("Pomodoro has paused but time continued elapsing");
+	                            if (secondsAfter === secondsAfterPause) resolve();else reject(new Error("Pomodoro has paused but time continued elapsing"));
 	                        }, 1500);
 	                    }, 1500);
 	                });
@@ -19693,7 +19714,7 @@ var FCC_Global =
 	                    setTimeout(function (_) {
 	                        var secondsAfter = getSeconds(document.getElementById("time-left").innerHTML);
 	                        if (secondsAfter === secondsBefore) {
-	                            reject("Pomodoro has started but time displayed is not changing");
+	                            reject(new Error("Pomodoro has started but time displayed is not changing"));
 	                            return;
 	                        }
 	                        // Pause the pomodoro
@@ -19702,7 +19723,7 @@ var FCC_Global =
 	                        setTimeout(function (_) {
 	                            var secondsAfterPause = getSeconds(document.getElementById("time-left").innerHTML);
 	                            if (secondsAfter !== secondsAfterPause) {
-	                                reject("Pomodoro has paused but time continued elapsing");
+	                                reject(new Error("Pomodoro has paused but time continued elapsing"));
 	                                return;
 	                            }
 	                            // Resume the pomodoro
@@ -19710,7 +19731,7 @@ var FCC_Global =
 	                            // wait another 1.5 seconds to be sure time is decrementing again
 	                            setTimeout(function (_) {
 	                                var secondsAfterResume = getSeconds(document.getElementById("time-left").innerHTML);
-	                                if (secondsAfterPause > secondsAfterResume) resolve();else reject("Pomodoro has resumed but displayed time is not changing");
+	                                if (secondsAfterPause > secondsAfterResume) resolve();else reject(new Error("Pomodoro has resumed but displayed time is not changing"));
 	                            }, 1500);
 	                        }, 1500);
 	                    }, 1500);
@@ -19718,49 +19739,36 @@ var FCC_Global =
 	            });
 	            it('22. When a session countdown reaches zero (NOTE: timer MUST reach 00:00), and a new countdown begins, the element with the id of "timer-label" should display a string indicating a break has begun.', function () {
 	                this.timeout(5000);
-	                // We "Hack" the global setTimeout and setInterval functions so time elapses faster (delay is forced to 30ms)
-	                // Note: we should consider putting these hacks in the beforeEach function so every timed test can be done in less time   
-	                // The problem is that we still don't know if it's acceptable to use this hack, because it implies forcing the campers to use setTimeout and setInterval functions to measure time in their pomodoro.
-	                hackGlobalTimerFunctions();
 	                // we decrement session time to the minimum (1 minute)
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                // start the pomodoro
 	                clickButtonsById([_start_stop]);
 	                return new Promise(function (resolve, reject) {
-	                    // 2 approaches here, we can either
-	                    // - watch for modifications on the time label and wait till it reaches zero, then we wait some more and then check the "Break" label. 
 	                    var timeLeft = document.getElementById("time-left");
+	                    var breakLength = document.getElementById("break-length");
 	                    // Save label to test that it has changed below
 	                    var sessionLabel = document.getElementById("timer-label").innerHTML;
 	                    var shouldBeInBreak = false;
 	                    var observer = observeElement("time-left", function (modType) {
 	                        if (timeLeft.innerHTML === "00:00") {
-	                            //console.log("Timer reaches Zero !!!");
 	                            shouldBeInBreak = true;
 	                        } else {
-	                            if (shouldBeInBreak) {
+	                            if (parseInt(timeLeft.innerHTML.slice(0, 2)) > 5) {
+	                                reject(new Error("Test timed out because Break time didn't start with the correct value: " + (parseInt(getMinutes(timeLeft.innerHTML)) + 1) + " instead of " + breakLength.innerHTML));
+	                            } else if (shouldBeInBreak) {
 	                                if (document.getElementById("timer-label").innerHTML !== sessionLabel) {
 	                                    resolve();
 	                                } else {
-	                                    reject("Timer has reached zero but didn't switch to Break time");
+	                                    reject(new Error("Timer has reached zero but didn't switch to Break time"));
 	                                }
 	                                observer.disconnect();
 	                            }
 	                        }
 	                    });
-	                    // - Or we can wait approximately the time it will take to reach zero (60*30ms + security margin) and then check the "Break" label.
-	                    /*savedSetTimeout( _ => {
-	                      if(document.getElementById("current-timer").innerHTML === "Break"){
-	                        resolve();
-	                      } else {
-	                        reject("Timer has reached zero but didn't switch to Break time");
-	                      }
-	                    }, 3000);*/
 	                });
 	            });
 	            it('23. When a session countdown reaches zero (NOTE: timer MUST reach 00:00), a new break countdown should begin, counting down from the value currently displayed in the id="break-length" element.', function () {
 	                this.timeout(5000);
-	                hackGlobalTimerFunctions();
 	                // we decrement session time to the minimum (1 minute)
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                // start the pomodoro
@@ -19768,23 +19776,24 @@ var FCC_Global =
 	                return new Promise(function (resolve, reject) {
 	                    var timeLeft = document.getElementById("time-left");
 	                    var shouldBeInBreak = false;
-	                    // Since not requiring specific labels, save the 'session' label to a variable, then test 
-	                    // within observer funciton that label has changed to know when in break
+	                    // Since not requiring specific labels, save the 'session' label to a variable, then test
+	                    // within observer function that label has changed to know when in break
 	                    var sessionLabel = document.getElementById("timer-label").innerHTML;
 	                    var observer = observeElement("time-left", function (modType) {
+	                        var currentTimer = document.getElementById("timer-label");
+	                        var breakLength = document.getElementById("break-length");
 	                        if (timeLeft.innerHTML === "00:00") {
-	                            //console.log("Timer reaches Zero !!!");
 	                            shouldBeInBreak = true;
 	                        } else {
-	                            if (shouldBeInBreak) {
-	                                var currentTimer = document.getElementById("timer-label");
-	                                var breakLength = document.getElementById("break-length");
+	                            if (parseInt(timeLeft.innerHTML.slice(0, 2)) > 5) {
+	                                reject(new Error("Timer has switched to Break time, but it didn't start with the correct value: " + (parseInt(getMinutes(timeLeft.innerHTML)) + 1) + " instead of " + breakLength.innerHTML));
+	                            } else if (shouldBeInBreak) {
 	                                if (currentTimer.innerHTML !== sessionLabel) {
 	                                    if (+getMinutes(timeLeft.innerHTML) === +breakLength.innerHTML) resolve();else {
-	                                        reject("Timer has switched to Break time, but it didn't start with the correct value: " + getMinutes(timeLeft.innerHTML) + " instead of " + breakLength.innerHTML);
+	                                        reject(new Error("Timer has switched to Break time, but it didn't start with the correct value: " + getMinutes(timeLeft.innerHTML) + " instead of " + breakLength.innerHTML));
 	                                    }
 	                                } else {
-	                                    reject("Timer has reached zero but didn't switch to Break time");
+	                                    reject(new Error("Timer has reached zero but didn't switch to Break time"));
 	                                }
 	                                observer.disconnect();
 	                            }
@@ -19794,7 +19803,6 @@ var FCC_Global =
 	            });
 	            it('24. When a break countdown reaches zero (NOTE: timer MUST reach 00:00), and a new countdown begins, the element with the id of "timer-label" should display a string indicating a session has begun.', function () {
 	                this.timeout(5000);
-	                hackGlobalTimerFunctions();
 	                // we decrement session length and break length to the minimum (1 minute)
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                clickButtonsById(Array(60).fill(_break_min));
@@ -19807,7 +19815,6 @@ var FCC_Global =
 	                    var breakLabel = void 0;
 	                    var observer = observeElement("time-left", function (modType) {
 	                        if (timeLeft.innerHTML === "00:00") {
-	                            //console.log("Timer reaches Zero !!!");
 	                            if (!shouldBeInBreak && !shouldBeInSessionAgain) {
 	                                shouldBeInBreak = true;
 	                            } else {
@@ -19821,7 +19828,7 @@ var FCC_Global =
 	                                if (document.getElementById("timer-label").innerHTML !== breakLabel) {
 	                                    resolve();
 	                                } else {
-	                                    reject("Timer has reached zero but didn't switch back to Session time");
+	                                    reject(new Error("Timer has reached zero but didn't switch back to Session time"));
 	                                }
 	                                observer.disconnect();
 	                            }
@@ -19831,8 +19838,7 @@ var FCC_Global =
 	            });
 	            it('25. When a break countdown reaches zero (NOTE: timer MUST reach 00:00), a new session countdown should begin, counting down from the value currently displayed in the id="session-length" element.', function () {
 	                this.timeout(5000);
-	                hackGlobalTimerFunctions();
-	                // we decrement session length and break length to the minimum (1 minute)
+	                // decrement session length and break length to the minimum (1 minute)
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                clickButtonsById(Array(60).fill(_break_min));
 	                // start the pomodoro
@@ -19844,7 +19850,6 @@ var FCC_Global =
 	                    var breakLabel = void 0;
 	                    var observer = observeElement("time-left", function (modType) {
 	                        if (timeLeft.innerHTML === "00:00") {
-	                            //console.log("Timer reaches Zero !!!");
 	                            if (!shouldBeInBreak && !shouldBeInSessionAgain) {
 	                                shouldBeInBreak = true;
 	                            } else {
@@ -19859,10 +19864,10 @@ var FCC_Global =
 	                                var sessionLength = document.getElementById("session-length");
 	                                if (currentTimer.innerHTML !== breakLabel) {
 	                                    if (+getMinutes(timeLeft.innerHTML) === +sessionLength.innerHTML) resolve();else {
-	                                        reject("Timer has switched back to Session time, but it didn't start with the correct value: " + getMinutes(timeLeft.innerHTML) + " instead of " + sessionLength.innerHTML);
+	                                        reject(new Error("Timer has switched back to Session time, but it didn't start with the correct value: " + getMinutes(timeLeft.innerHTML) + " instead of " + sessionLength.innerHTML));
 	                                    }
 	                                } else {
-	                                    reject("Timer has reached zero but didn't switch back to Session time");
+	                                    reject(new Error("Timer has reached zero but didn't switch back to Session time"));
 	                                }
 	                                observer.disconnect();
 	                            }
@@ -19872,24 +19877,23 @@ var FCC_Global =
 	            });
 	            it('26. When a countdown reaches zero (NOTE: timer MUST reach 00:00), a sound (must be 200ms or longer) indicating that time is up should play. This should utilize an HTML5 <audio> tag and have a corresponding id="beep".', function () {
 	                this.timeout(5000);
-	                hackGlobalTimerFunctions();
-	                // we decrement session time to the minimum (1 minute)
+	                // decrement session time to the minimum (1 minute)
 	                clickButtonsById(Array(60).fill(_sesh_min));
 	                // start the pomodoro
 	                clickButtonsById([_start_stop]);
 	                return new Promise(function (resolve, reject) {
 	                    var timeLeft = document.getElementById("time-left");
+	                    var breakLength = document.getElementById("break-length");
 	                    var observer = observeElement("time-left", function (modType) {
-	                        if (timeLeft.innerHTML === "00:00") {
-	                            //console.log("Timer reaches Zero !!!");
-	                            // we wait 200ms and then check if sound is playing
+	                        if (parseInt(timeLeft.innerHTML.slice(0, 2)) > 5) {
+	                            reject(new Error("Test timed out because Break time didn't start with the correct value: " + (parseInt(getMinutes(timeLeft.innerHTML)) + 1) + " instead of " + breakLength.innerHTML));
+	                        } else if (timeLeft.innerHTML === "00:00") {
 	                            // note: sound has to be longer than 200 ms, or the test will fail if the sound stops before the test actually happens
 	                            savedSetTimeout(function (_) {
-	                                // note: we have to have an audio tag with id "beep" on the page
 	                                if (document.getElementById("beep") && !document.getElementById("beep").paused) {
 	                                    resolve();
 	                                } else {
-	                                    reject("Timer has reached zero but, either there is not audio tag with ID 'beep' on the page, or it's not playing while it should.");
+	                                    reject(new Error("Timer has reached zero but, either there is not audio tag with ID 'beep' on the page, or it's not playing while it should."));
 	                                }
 	                            }, 200);
 	                        }
@@ -19902,7 +19906,7 @@ var FCC_Global =
 
 /***/ },
 /* 48 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
@@ -19910,12 +19914,14 @@ var FCC_Global =
 	    value: true
 	});
 	exports.default = createTributePageTests;
-	function createTributePageTests() {
 
-	    function getParentElement(domNode) {
-	        var parent = document.getElementById(domNode).parentElement.id;
-	        return parent;
-	    }
+	var _jquery = __webpack_require__(1);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function createTributePageTests() {
 
 	    function getPropValue(el, prop) {
 	        return window.getComputedStyle(el).getPropertyValue(prop);
@@ -19941,30 +19947,28 @@ var FCC_Global =
 
 	            it('4. Within the "img-div" element, I should see an <img> element with a corresponding ' + 'id="image".', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("image"));
-	                var imageParent = getParentElement('image');
-	                FCC_Global.assert.strictEqual('img-div', imageParent, 'Element is not a child of id="img-div".');
+	                FCC_Global.assert.strictEqual((0, _jquery2.default)('#img-div').find('#image').length, 1, 'Element is not a child of id="img-div" ');
 	            });
 
 	            it('5. Within the "img-div" element, I should see an element with a corresponding id="img-caption" ' + 'that contains textual content describing the image shown in "img-div".', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("img-caption"));
-	                var captionParent = getParentElement('img-caption');
-	                FCC_Global.assert.strictEqual('img-div', captionParent, "Element is not a child of id='img-div'");
+	                FCC_Global.assert.strictEqual((0, _jquery2.default)('#img-div').find('#img-caption').length, 1, 'Element is not a child of id="img-div" ');
 	                var captionContents = document.getElementById('img-caption').innerText;
-	                FCC_Global.assert.isAbove(captionContents.length, 0, "Element does not have any content");
+	                FCC_Global.assert.isAbove(captionContents.length, 0, "Element does not have any content ");
 	            });
 
-	            it('6. I should see an element with a corresponding id="tribute-info", which contains textual content ' + 'describing the subject of the tribute page. HINT: You must give your <a> element an attribute of target and set it to "_blank" in order for your link to open in a new tab.', function () {
+	            it('6. I should see an element with a corresponding id="tribute-info", which contains textual content ' + 'describing the subject of the tribute page.', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById('tribute-info'));
 	                var infoContents = document.getElementById('tribute-info').innerText;
-	                FCC_Global.assert.isAbove(infoContents.length, 0, "Element does not have any content");
+	                FCC_Global.assert.isAbove(infoContents.length, 0, "Element does not have any content ");
 	            });
 
 	            it('7. I should see an <a> element with a corresponding id="tribute-link", which links to an outside site ' + 'that contains additional information about the subject of the tribute page. HINT: You must give your element an attribute of target and set it to "_blank" in order for your link to open in a new tab (i.e. target="_blank").', function () {
 	                var tributeLink = document.getElementById('tribute-link');
 	                FCC_Global.assert.isNotNull(tributeLink);
-	                FCC_Global.assert(tributeLink.hasAttribute('href'), '<a> element with id="tribute-link" must contain an href attribute');
-	                FCC_Global.assert(tributeLink.hasAttribute('target'), '<a> element with id="tribute-link" must contain a target attribute');
-	                FCC_Global.assert.strictEqual(tributeLink.getAttribute('target'), '_blank', 'The target attribute should be set to "_blank", in order for the link to open in a new tab.');
+	                FCC_Global.assert(tributeLink.hasAttribute('href'), '<a> element with id="tribute-link" must contain an href attribute ');
+	                FCC_Global.assert(tributeLink.hasAttribute('target'), '<a> element with id="tribute-link" must contain a target attribute ');
+	                FCC_Global.assert.strictEqual(tributeLink.getAttribute('target'), '_blank', 'The target attribute should be set to "_blank", in order for the link to open in a new tab ');
 	            });
 	        }); // END #Content
 
@@ -19973,19 +19977,22 @@ var FCC_Global =
 	            it('1. The <img> element should responsively resize, relative to the width of its parent element, without ' + 'exceeding its original size.', function () {
 	                var img = document.getElementById('image');
 	                var maxWidthValue = getPropValue(img, 'max-width');
-	                FCC_Global.assert.notStrictEqual(maxWidthValue, 'none', 'Try using the "max-width" style property');
+	                FCC_Global.assert.notStrictEqual(maxWidthValue, 'none', 'Try using the "max-width" style property ');
 	            });
 
 	            it('2. The <img> element should be centered within its parent element.', function () {
 	                var img = document.getElementById('image'),
-	                    imgParent = document.getElementById(getParentElement('image')),
-	                    imgWidth = getPropValue(img, 'width'),
-	                    parentWidth = getPropValue(imgParent, 'width');
+	                    imgParent = document.getElementById('image').parentElement,
+	                    imgWidth = img.getBoundingClientRect().width,
+	                    parentPadLeft = parseInt(getPropValue(imgParent, 'padding-left')),
+	                    parentPadRight = parseInt(getPropValue(imgParent, 'padding-right')),
+	                    parentWidth = imgParent.getBoundingClientRect().width - (parentPadRight + parentPadLeft);
+	                console.log(parentPadLeft, parentPadRight, parentWidth, imgParent.getBoundingClientRect().width, imgWidth);
+	                // difference in width between img and parent should be equal to the sum of left margin & right margin
 	                var difference = parseFloat(parentWidth) - parseFloat(imgWidth);
-	                // if margin value returns only one entry then all margins are 0, if returns more than one, we need second value. 
-	                // this test might only work on full page view!
+	                // if margin value returns only one entry then all margins are 0, if returns more than one, we need second value.
 	                var totalMargin = getPropValue(img, 'margin').split(' ').length === 1 ? 0 : parseInt(getPropValue(img, 'margin').split(' ')[1]) * 2;
-	                FCC_Global.assert.approximately(Math.floor(difference), totalMargin, 5, 'Image is not centered');
+	                FCC_Global.assert.approximately(Math.floor(difference), totalMargin, 11, 'Image is not centered ');
 	            });
 	        }); // END #Layout
 	    }); // END #TributePageTests
@@ -20190,7 +20197,7 @@ var FCC_Global =
 
 	            it('9. The #email input field should have placeholder text to let the user know what the field is for.', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("email"), '#email is not defined ');
-	                FCC_Global.assert.strictEqual(document.getElementById("email").hasAttribute('placeholder'), true, 'The input field does not have placehoder text ');
+	                FCC_Global.assert.strictEqual(document.getElementById("email").hasAttribute('placeholder'), true, 'The input field does not have placeholder text ');
 	                FCC_Global.assert.isAbove(document.getElementById("email").getAttribute('placeholder').length, 0, 'The placeholder attribute should have some text ');
 	            });
 
@@ -20260,8 +20267,8 @@ var FCC_Global =
 	                        }
 	                    }
 	                }
-	                // our test suite uses a display of flex, so we need to count how many times its used 
-	                // and confirm that its more than once. If we just detect one instance, its ours. 
+	                // our test suite uses a display of flex, so we need to count how many times its used
+	                // and confirm that its more than once. If we just detect one instance, its ours.
 	                FCC_Global.assert.isAbove(flexCount.length, 1, 'We do not detect a display property set to flex or inline-flex anywhere in your CSS ');
 	            });
 	        }); // END #Layout
@@ -20270,7 +20277,7 @@ var FCC_Global =
 
 /***/ },
 /* 51 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	"use strict";
 
@@ -20278,18 +20285,11 @@ var FCC_Global =
 	    value: true
 	});
 	exports.default = createSurveyFormTests;
-
-	var _jquery = __webpack_require__(1);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 	function createSurveyFormTests() {
 	    /**
 	    Returns the number of elements that are selectable
 	    **/
-	    function getNumActive(elems) {
+	    function getNumOptions(elems) {
 	        var numActive = 0;
 	        for (var i = 0; i < elems.length; i++) {
 	            var el = elems[i];
@@ -20300,58 +20300,81 @@ var FCC_Global =
 	        return numActive;
 	    }
 
+	    /**
+	    Returns the number of elements that have a value-attribute
+	    **/
+	    function getNumValues(elems) {
+	        var numValues = 0;
+	        for (var i = 0; i < elems.length; i++) {
+	            var el = elems[i];
+	            if (el.hasAttribute("value")) {
+	                numValues++;
+	            }
+	        }
+	        return numValues;
+	    }
+
 	    describe("Survey Form tests", function () {
 	        describe("#Content", function () {
 
 	            it('1. I can see a title with id="title" in H1 sized text.', function () {
 	                var title = document.getElementById('title');
-	                FCC_Global.assert.isNotNull(title, "There should be an element with id='title '");
+	                FCC_Global.assert.isNotNull(title, 'There should be an element with id="title" ');
 	                FCC_Global.assert.strictEqual(title.tagName, "H1", "#title should be in H1 sized text ");
 	                FCC_Global.assert.isAbove(title.innerText.length, 0, '#title should contain some text ');
 	            });
 
 	            it('2. I can see a short explanation with id="description" in P sized text.', function () {
 	                var description = document.getElementById('description');
-	                FCC_Global.assert.isNotNull(description, "There should be an element with id='description' ");
+	                FCC_Global.assert.isNotNull(description, 'There should be an element with id="description" ');
 	                FCC_Global.assert.strictEqual(description.tagName, "P", "#description should be in P sized text ");
 	                FCC_Global.assert.isAbove(description.innerText.length, 0, '#description should contain some text ');
 	            });
 
-	            it('3. I am required to enter my name in a field with id="name".', function () {
+	            it('3. I am presented with a <form> with id="survey-form". The <form> must contain all other form elements.', function () {
+	                var form = document.getElementById("survey-form");
+	                FCC_Global.assert.isNotNull(form, 'There should be an element with id="survey-form" ');
+	                FCC_Global.assert.strictEqual(form.tagName, "FORM", "#survey-form should be a <form>-element ");
+	            });
+
+	            it('4. I am required to enter my name in a field with id="name".', function () {
 	                var name = document.getElementById("name");
 	                FCC_Global.assert.isNotNull(name, 'There should be an input text field with id="name" ');
 	                FCC_Global.assert.strictEqual(name.type, "text", 'input field with id="name" should be a text field ');
 	                FCC_Global.assert.isOk(name.required, "Name input field should be required ");
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #name").length, 0, 'The field with id="name" is not inside the form element ');
 	            });
 
-	            it('4. I am required to enter an email in a field with id="email".', function () {
+	            it('5. I am required to enter an email in a field with id="email".', function () {
 	                var email = document.getElementById("email");
-	                FCC_Global.assert.isNotNull(email, "There should be an input text field with id='email' ");
+	                FCC_Global.assert.isNotNull(email, 'There should be an input text field with id="email" ');
 	                FCC_Global.assert.isOk(email.required, "Email input field should be required ");
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #email").length, 0, 'The field with id="email" is not inside the form element ');
 	            });
 
-	            it('5. If I enter an email that is not formatted correctly, I will see an HTML5 validation error.', function () {
+	            it('6. If I enter an email that is not formatted correctly, I will see an HTML5 validation error.', function () {
 	                var email = document.getElementById("email");
 	                FCC_Global.assert.strictEqual(email.type, "email", "Email field should be HTML5 validated ");
 	            });
 
-	            it('6. I can enter a number in a field with id="number".', function () {
+	            it('7. I can enter a number in a field with id="number".', function () {
 	                var number = document.getElementById("number");
-	                FCC_Global.assert.isNotNull(number, "There should be an input text field with id='number' ");
+	                FCC_Global.assert.isNotNull(number, 'There should be an input text field with id="number" ');
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #number").length, 0, 'The field with id="number" is not inside the form element ');
 	            });
 
-	            it('7. If I enter non-numbers in a number field, I will see an HTML5 validation error.', function () {
+	            it('8. If I enter non-numbers in a number field, I will see an HTML5 validation error.', function () {
 	                var number = document.getElementById("number");
 	                FCC_Global.assert.strictEqual(number.type, "number", "Number field should be HTML5 validated ");
 	            });
 
-	            it('8. If I enter numbers outside the range of the number field, I will see an HTML5 validation error.', function () {
+	            it('9. If I enter numbers outside the range of the number field, I will see an HTML5 validation error.', function () {
 	                var number = document.getElementById("number");
 	                FCC_Global.assert.isNotNaN(parseInt(number.min), "Minimum number should be defined ");
 	                FCC_Global.assert.isNotNaN(parseInt(number.max), "Maximum number should be defined ");
 	            });
 
-	            it('9. For the name, email, and number input fields, I can see corresponding labels that describe the purpose of each field with the following ids: id="name-label", id="email-label", and id="number-label".', function () {
+	            it('10. For the name, email, and number input fields, I can see corresponding labels that describe the purpose of each field with the following ids: id="name-label", id="email-label", and id="number-label".', function () {
 	                var nameLabel = document.getElementById('name-label');
 	                var emailLabel = document.getElementById('email-label');
 	                var numberLabel = document.getElementById('number-label');
@@ -20364,9 +20387,12 @@ var FCC_Global =
 	                FCC_Global.assert.isNotNull(numberLabel, "#number-label is not defined ");
 	                FCC_Global.assert.strictEqual(numberLabel.nodeName, 'LABEL', '#number-label should be a <label> element ');
 	                FCC_Global.assert.isAbove(numberLabel.innerText.length, 0, '#number-label should contain some text ');
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #name-label").length, 0, 'The label with id="name-label" is not inside the form element ');
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #email-label").length, 0, 'The label with id="email-label" is not inside the form element ');
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #number-label").length, 0, 'The label with id="number-label" is not inside the form element ');
 	            });
 
-	            it('10. For the name, email, and number input fields, I can see placeholder text that gives me a description or instructions for each field.', function () {
+	            it('11. For the name, email, and number input fields, I can see placeholder text that gives me a description or instructions for each field.', function () {
 	                FCC_Global.assert.strictEqual(document.getElementById('name').hasAttribute('placeholder'), true, 'The name input field should have a placeholder attribute ');
 	                FCC_Global.assert.isAbove(document.getElementById('name').placeholder.length, 0, 'The name input field\'s placeholder attribute should have a value of some text ');
 	                FCC_Global.assert.strictEqual(document.getElementById('email').hasAttribute('placeholder'), true, 'The email input field should have a placeholder attribute ');
@@ -20375,34 +20401,55 @@ var FCC_Global =
 	                FCC_Global.assert.isAbove(document.getElementById('number').placeholder.length, 0, 'The number input field\'s placeholder attribute should have a value of some text ');
 	            });
 
-	            it('11. I can select an option from a dropdown.', function () {
-	                var selects = document.getElementsByTagName('select');
-	                // need to check to make sure there is more than one <select>, as our default code contains a <select> as well
-	                // if we are detecting only one, it is ours
-	                FCC_Global.assert.isAtLeast(selects.length, 2, "There should be at least 1 select field ");
-	                for (var i = 0; i < selects.length; i++) {
-	                    var select = selects[i];
-	                    FCC_Global.assert.isAtLeast(getNumActive(select.options), 1, "Select should contain at least 1 selectable option ");
+	            it('12. I can select an option from a dropdown that has corresponding id="dropdown".', function () {
+	                var dropdown = document.getElementById('dropdown');
+	                FCC_Global.assert.isNotNull(dropdown, 'There should be a select field with id="dropdown" ');
+	                FCC_Global.assert.isAtLeast(getNumOptions(dropdown.options), 2, "Select should contain at least 2 selectable options ");
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #dropdown").length, 0, 'The select field with id="dropdown" is not inside the form element ');
+	            });
+
+	            it('13. I can select a field from one or more groups of radio buttons. Each group should be grouped using the name attribute.', function () {
+	                var radioButtons = document.querySelectorAll('input[type="radio"]');
+	                FCC_Global.assert.isAtLeast(radioButtons.length, 2, 'There should be at least 2 radio buttons ');
+	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#survey-form input[type="radio"]').length, 2, 'There should be at least 2 radio buttons inside the #survey-form ');
+	                FCC_Global.assert.strictEqual(radioButtons.length, getNumValues(radioButtons), "All your radio-buttons must have a value attribute ");
+
+	                var groups = {};
+	                for (var i = 0; i < radioButtons.length; i++) {
+	                    var groupName = radioButtons[i].name;
+	                    FCC_Global.assert.isAbove(groupName.length, 0, "All your radio-buttons need a name attribute ");
+	                    var objRef = groups[groupName];
+	                    groups[groupName] = objRef ? objRef + 1 : 1;
+	                }
+	                for (var group in groups) {
+	                    FCC_Global.assert.isAtLeast(groups[group], 2, "Every radio-button group should have at least 2 radio buttons ");
 	                }
 	            });
 
-	            it('12. I can select a field from a series of radio buttons.', function () {
-	                var radioButtons = (0, _jquery2.default)(":radio");
-	                FCC_Global.assert.isAtLeast(radioButtons.length, 1, "There should be at least 1 radio button ");
-	                FCC_Global.assert.isAtLeast(getNumActive(radioButtons), 1, "Select should contain at least 1 active radio button ");
+	            it('14. I can select several fields from a series of checkboxes.', function () {
+	                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+	                // need to make sure there are more than two checkboxes, as our default code contains a checkbox as well
+	                // if we are detecting only two, one of them is ours; 
+	                // our checkbox does not have a value-attribute so we must use "-1" in the third test
+	                FCC_Global.assert.isAtLeast(checkboxes.length, 3, "There should be at least 2 checkboxes ");
+	                FCC_Global.assert.isAtLeast(document.querySelectorAll('#survey-form input[type="checkbox"]').length, 2, 'The checkboxes are not inside the form element ');
+	                FCC_Global.assert.strictEqual(checkboxes.length - 1, getNumValues(checkboxes), "All your checkboxes must have a value attribute ");
 	            });
 
-	            it('13. I can select several fields from a series of checkboxes.', function () {
-	                var checkboxes = (0, _jquery2.default)(":checkbox");
-	                // need to check to make sure there is more than one checkbox, as our default code contains a checkbox as well
-	                // if we are detecting only one, it is ours
-	                FCC_Global.assert.isAtLeast(checkboxes.length, 2, "There should be at least 1 checkbox ");
-	                FCC_Global.assert.isAtLeast(getNumActive(checkboxes), 1, "There should be at least 1 active checkbox ");
-	            });
-
-	            it('14. I am presented with a <textarea> at the end for additional comments.', function () {
+	            it('15. I am presented with a <textarea> at the end for additional comments.', function () {
 	                var textareas = document.getElementsByTagName('textarea');
 	                FCC_Global.assert.isAtLeast(textareas.length, 1, "There should be at least 1 <textarea> ");
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form textarea").length, 0, 'The textarea is not inside the form element ');
+	            });
+
+	            it('16. I am presented with a button with id="submit" to submit all my inputs.', function () {
+	                var button = document.getElementById("submit");
+	                FCC_Global.assert.isNotNull(button, 'There should be a button with id="submit" ');
+	                if (button.nodeName === "INPUT") {
+	                    FCC_Global.assert.strictEqual(button.hasAttribute("type"), true, 'If you are using an <input> element for your button you need to define a type attribute ');
+	                }
+	                FCC_Global.assert.strictEqual(button.type, "submit", 'Your button\'s type attribute should have a value of "submit" ');
+	                FCC_Global.assert.isAbove(document.querySelectorAll("#survey-form #submit").length, 0, 'The button with id="submit" is not inside the form element ');
 	            });
 	        }); // END #Content
 	    }); // END Survery Form tests
@@ -20424,14 +20471,21 @@ var FCC_Global =
 	        return Array.from(document.getElementsByClassName(className));
 	    };
 
+	    var sharedHeaderTest = function sharedHeaderTest(classQty) {
+	        var firstChildHeaderQty = classArray('main-section').filter(function (el) {
+	            return el.firstElementChild.nodeName === 'HEADER';
+	        });
+	        FCC_Global.assert.strictEqual(firstChildHeaderQty.length, classQty, "Not all elements with the class 'main-section' have a <header> element as a first element child ");
+	    };
+
 	    describe("Technical Documentation Page tests", function () {
 	        describe('#Content', function () {
-	            it('1. I can see an <article> element with a corresponding id="main-doc", which contains the ' + 'page\'s main content (technical documentation).', function () {
+	            it('1. I can see a <main> element with a corresponding id="main-doc", which contains the ' + 'page\'s main content (technical documentation).', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById('main-doc'), "There is no element with an id of 'main-doc' ");
-	                FCC_Global.assert.strictEqual(document.getElementById('main-doc').nodeName, "ARTICLE", "The 'main-doc' element should be an <article> ");
+	                FCC_Global.assert.strictEqual(document.getElementById('main-doc').nodeName, "MAIN", "The 'main-doc' element should be a <main> ");
 	            });
 
-	            it('2. Within the #main-doc <article> element, I can see several <section> elements, each with a class ' + 'of "main-section". There should be a minimum of 5.', function () {
+	            it('2. Within the #main-doc ( <main> ) element, I can see several <section> elements, each with a class ' + 'of "main-section". There should be a minimum of 5.', function () {
 	                var classQty = classArray('main-section').length;
 	                var typeQty = classArray('main-section').filter(function (el) {
 	                    return el.nodeName === 'SECTION';
@@ -20443,46 +20497,49 @@ var FCC_Global =
 	            });
 
 	            it('3. The first element within each .main-section should be a <header> element which contains text that ' + 'describes the topic of that section.', function () {
-	                var classQty = document.getElementsByClassName('main-section').length;
-	                var firstChildHeaderQty = classArray('main-section').filter(function (el) {
-	                    return el.firstElementChild.nodeName === 'HEADER';
-	                });
+	                var classQty = classArray('main-section').length;
 	                var mustContainText = classArray('main-section').filter(function (el) {
 	                    return el.firstElementChild.innerText.length > 0;
 	                });
 	                FCC_Global.assert.isAbove(classQty, 0, 'No elements with the class "main-section" are defined ');
-	                FCC_Global.assert.strictEqual(firstChildHeaderQty.length, classQty, "Not all elements with the class 'main-section' " + "have a <header> element as a first element child ");
+	                sharedHeaderTest(classQty);
 	                FCC_Global.assert.strictEqual(mustContainText.length, classQty, 'Not all first-child <header> elements within ' + '"main-section" elements contain text ');
 	            });
 
 	            it('4. Each <section> element with the class of "main-section" should also have an id that corresponds with the ' + 'text of each <header> contained within it. Any spaces should be replaced with underscores (e.g. The ' + '<section> that contains the header "Javascript and Java" should have a corresponding ' + 'id="Javascript_and_Java").', function () {
+
 	                var mainSections = classArray('main-section');
 	                FCC_Global.assert.isAbove(mainSections.length, 0, 'No elements with the class "main-section" are defined ');
+
+	                sharedHeaderTest(mainSections.length);
+
 	                var headerText = mainSections.map(function (el, i) {
+	                    FCC_Global.assert.isAbove(el.firstElementChild.innerText.length, 0, 'All headers must contain text ');
 	                    return [][i] = el.firstElementChild.innerText.replace(/\s/g, '_');
 	                });
+
 	                var mainSectionIDs = mainSections.map(function (el, i) {
+	                    FCC_Global.assert.strictEqual(el.hasAttribute('id'), true, "Each 'main-section' should have an id attribute ");
 	                    return [][i] = el.id;
 	                });
+
 	                var remainder = headerText.filter(function (str) {
 	                    return mainSectionIDs.indexOf(str) === -1;
 	                });
-	                FCC_Global.assert.strictEqual(remainder.length, 0, 'Some "main-section" elements are missing the following ids (don\'t ' + 'forget to replace spaces with underscores!) : ' + remainder + ' ');
+
+	                FCC_Global.assert.strictEqual(remainder.length, 0, 'Some "main-section" elements are missing the following ids (don\'t forget to replace spaces with underscores!) : ' + remainder + ' ');
 	            });
 
 	            it('5. The .main-section elements should contain at least 10 <p> elements total (not each).', function () {
 	                FCC_Global.assert.isAtLeast(document.querySelectorAll('.main-section p').length, 10, "There are not at least 10 <p> " + "elements throughout all of the elements with the class of 'main-section' ");
-	                // WANTED THE TEST TO BE AS FOLLOWS BUT COULD NOT FIND A WAY TO TEST FOR ELEMENTS WITH CLASS OF MAIN-SECTION
-	                // CONTAINING <P> ELEMENTS AT AN ARBITRARY DEPTH OF NESTING (WIHTOUT ADDITIONAL EXTERNAL DEPENDENCIES):
-	                // Each "main-section" should contain at least one <p> element with textual content.
 	            });
 
 	            it('6. The .main-section elements should contain at least 5 <code> elements total (not each).', function () {
-	                FCC_Global.assert.isAtLeast(document.querySelectorAll('.main-section code').length, 5, "There are not at least 5 <code> " + "elements throughout all of the elemnts with the class of 'main-section' ");
+	                FCC_Global.assert.isAtLeast(document.querySelectorAll('.main-section code').length, 5, "There are not at least 5 <code> " + "elements throughout all of the elements with the class of 'main-section' ");
 	            });
 
 	            it('7. The .main-section elements should contain at least 5 <li> items total (not each).', function () {
-	                FCC_Global.assert.isAtLeast(document.querySelectorAll('.main-section li').length, 5, "There are not " + "at least 5 <li> elements throughout all of the elemnts with the class of 'main-section' ");
+	                FCC_Global.assert.isAtLeast(document.querySelectorAll('.main-section li').length, 5, "There are not " + "at least 5 <li> elements throughout all of the elements with the class of 'main-section' ");
 	            });
 
 	            it('8. I can see a <nav> element with a corresponding id="navbar".', function () {
@@ -20588,41 +20645,43 @@ var FCC_Global =
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
+	var _globalD3Tests = __webpack_require__(54);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function createBarChartTests() {
 
 	    describe('#BarChartTests', function () {
 
-	        it('1. My chart should have a title with a corresponding id="title".', function () {
+	        it('1. My chart should have a title with a corresponding id="title"', function () {
 	            FCC_Global.assert.isNotNull(document.getElementById('title'), 'Could not find element with id="title" ');
 	        });
 
-	        it('2. My Chart should have an x-axis with a corresponding id="x-axis".', function () {
+	        it('2. My Chart should have an x-axis with a corresponding id="x-axis"', function () {
 	            FCC_Global.assert.isNotNull(document.getElementById('x-axis'), 'Could not find element with id="x-axis" ');
 
 	            FCC_Global.assert.isAbove(document.querySelectorAll('g#x-axis').length, 0, 'x-axis should be a <g> SVG element ');
 	        });
 
-	        it('3. My Chart should have a y-axis with a corresponding id="y-axis".', function () {
+	        it('3. My Chart should have a y-axis with a corresponding id="y-axis"', function () {
 	            FCC_Global.assert.isNotNull(document.getElementById('y-axis'), 'Could not find element with id="y-axis" ');
 
 	            FCC_Global.assert.isAbove(document.querySelectorAll('g#y-axis').length, 0, 'y-axis should be a <g> SVG element ');
 	        });
 
-	        it('4. Both axes should contain multiple tick labels.', function () {
+	        it('4. Both axes should contain multiple tick labels', function () {
 	            FCC_Global.assert.isAbove((0, _jquery2.default)("#x-axis .tick").length, 1, "There are not enough tick labels on the x-axis ");
 
 	            FCC_Global.assert.isAbove((0, _jquery2.default)("#y-axis .tick").length, 1, "There are not enough tick labels on the y-axis ");
 	        });
 
-	        it('5. My Chart should have a bar for each data point with a corresponding class="bar" displaying the data.', function () {
+	        it('5. My Chart should have a bar for each data point with a corresponding class="bar" displaying the data', function () {
 	            FCC_Global.assert.isAbove(document.querySelectorAll('rect.bar').length, 0, 'Could not find any elements with class="bar" ');
 
 	            FCC_Global.assert.equal(document.querySelectorAll('rect.bar').length, 275, 'The number of bars is not equal to the number of data points ');
 	        });
 
-	        it('6. Each bar should have the properties "data-date" and "data-gdp" containing date and GDP values.', function () {
+	        it('6. Each bar should have the properties "data-date" and "data-gdp" containing date and GDP values', function () {
 	            var bars = document.getElementsByClassName('bar');
 	            FCC_Global.assert.isAtLeast(bars.length, 1, 'no elements with the class of "bar" are detected ');
 	            for (var i = 0; i < bars.length; i++) {
@@ -20632,7 +20691,7 @@ var FCC_Global =
 	            }
 	        });
 
-	        it('7. The "data-date" properties should match the order of the provided data.', function (done) {
+	        it('7. The "data-date" properties should match the order of the provided data', function (done) {
 	            _jquery2.default.getJSON('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json', function (res) {
 	                try {
 	                    var bars = document.getElementsByClassName('bar');
@@ -20649,7 +20708,7 @@ var FCC_Global =
 	            });
 	        });
 
-	        it('8. The "data-gdp" properties should match the order of the provided data.', function (done) {
+	        it('8. The "data-gdp" properties should match the order of the provided data', function (done) {
 	            _jquery2.default.getJSON('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/GDP-data.json', function (res) {
 	                try {
 	                    var bars = document.getElementsByClassName('bar');
@@ -20666,7 +20725,7 @@ var FCC_Global =
 	            });
 	        });
 
-	        it('9. Each bar\'s height should accurately represent the data\'s corresponding GDP.', function () {
+	        it('9. Each bar\'s height should accurately represent the data\'s corresponding GDP', function () {
 	            var bars = document.querySelectorAll('rect.bar');
 
 	            // get the ratio of the first data point to the height of the first bar
@@ -20683,7 +20742,7 @@ var FCC_Global =
 	            }
 	        });
 
-	        it('10. I can mouse over a bar and see a tooltip with corresponding id="tooltip" which displays more information about the data.', function () {
+	        it('10. I can mouse over a bar and see a tooltip with corresponding id="tooltip" which displays more information about the data', function () {
 	            var firstRequestTimeout = 100;
 	            var secondRequestTimeout = 2000;
 	            this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
@@ -20694,23 +20753,23 @@ var FCC_Global =
 	            var bars = (0, _jquery2.default)('.bar');
 
 	            // place mouse on random bar and check if tooltip is visible
-	            var randomIndex = FCC_Global.getRandomIndex(bars.length);
+	            var randomIndex = (0, _globalD3Tests.getRandomIndex)(bars.length);
 	            var randomBar = bars[randomIndex];
 	            randomBar.dispatchEvent(new MouseEvent('mouseover'));
 
 	            // promise is used to prevent test from ending prematurely
 	            return new Promise(function (resolve, reject) {
-	                // timeout is used to accomodate tooltip transitions
+	                // timeout is used to accommodate tooltip transitions
 	                setTimeout(function (_) {
-	                    if (FCC_Global.getToolTipStatus(tooltip) !== 'visible') {
-	                        reject('Tooltip should be visible when mouse is on a bar ');
+	                    if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'visible') {
+	                        reject(new Error('Tooltip should be visible when mouse is on a bar '));
 	                    }
 
 	                    // remove mouse from bar and check if tooltip is hidden again
 	                    randomBar.dispatchEvent(new MouseEvent('mouseout'));
 	                    setTimeout(function (_) {
-	                        if (FCC_Global.getToolTipStatus(tooltip) !== 'hidden') {
-	                            reject('Tooltip should be hidden when mouse is not on a bar ');
+	                        if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'hidden') {
+	                            reject(new Error('Tooltip should be hidden when mouse is not on a bar '));
 	                        } else {
 	                            resolve();
 	                        }
@@ -20719,12 +20778,12 @@ var FCC_Global =
 	            });
 	        });
 
-	        it('11. My tooltip should have a "data-date" property that corresponds to the given date of the active bar.', function () {
+	        it('11. My tooltip should have a "data-date" property that corresponds to the given date of the active bar', function () {
 	            var tooltip = document.getElementById('tooltip');
 	            FCC_Global.assert.isNotNull(tooltip.getAttribute("data-date"), 'Could not find property "data-date" in tooltip ');
 
 	            var bars = (0, _jquery2.default)('.bar');
-	            var randomIndex = FCC_Global.getRandomIndex(bars.length);
+	            var randomIndex = (0, _globalD3Tests.getRandomIndex)(bars.length);
 
 	            var randomBar = bars[randomIndex];
 
@@ -20742,6 +20801,98 @@ var FCC_Global =
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.getToolTipStatus = getToolTipStatus;
+	exports.getRandomIndex = getRandomIndex;
+	exports.testToolTip = testToolTip;
+
+	var _jquery = __webpack_require__(1);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function getToolTipStatus(tooltip) {
+	  // jQuery's :hidden selector checks if the element or its parents have a display of none, a type of hidden, or height/width set to 0
+	  // if the element is hidden with opacity=0 or visibility=hidden, jQuery's :hidden will return false because it takes up space in the DOM
+	  // this test combines jQuery's :hidden with tests for opacity and visbility to cover most use cases (z-index and potentially others are not tested)
+	  if ((0, _jquery2.default)(tooltip).is(':hidden') || tooltip.style.opacity === '0' || tooltip.style.visibility === 'hidden') {
+	    return 'hidden';
+	  } else {
+	    return 'visible';
+	  }
+	}
+
+	function getRandomIndex(max) {
+	  return Math.floor(Math.random() * max);
+	}
+
+	/**
+	  Mouses over random areas to see if a tooltip appears
+	**/
+	function testToolTip(areas) {
+	  describe('#Tooltip Tests', function () {
+	    it('1. I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
+	      var firstRequestTimeout = 100;
+	      var secondRequestTimeout = 2000;
+	      this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
+	      FCC_Global.assert.isNotNull(document.getElementById('tooltip'), 'There should be an element with id="tooltip"');
+
+	      var tooltip = document.getElementById('tooltip');
+
+	      // place mouse on random bar and check if tooltip is visible
+	      var randomIndex = getRandomIndex(areas.length);
+	      var randomArea = areas[randomIndex];
+	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
+	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
+	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
+
+	      // promise is used to prevent test from ending prematurely
+	      return new Promise(function (resolve, reject) {
+	        // timeout is used to accomodate tooltip transitions
+	        setTimeout(function (_) {
+	          if (getToolTipStatus(tooltip) !== 'visible') {
+	            reject(new Error('Tooltip should be visible when mouse is on an area'));
+	          }
+
+	          // remove mouse from cell and check if tooltip is hidden again
+	          randomArea.dispatchEvent(new MouseEvent('mouseout'));
+	          setTimeout(function (_) {
+	            if (getToolTipStatus(tooltip) !== 'hidden') {
+	              reject(new Error('Tooltip should be hidden when mouse is not on an area'));
+	            } else {
+	              resolve();
+	            }
+	          }, secondRequestTimeout);
+	        }, firstRequestTimeout);
+	      });
+	    });
+	    it('2. My tooltip should have a "data-value" property that corresponds to the given value of the active area.', function () {
+	      var tooltip = document.getElementById('tooltip');
+	      FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
+	      var randomIndex = getRandomIndex(areas.length);
+
+	      var randomArea = areas[randomIndex];
+
+	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
+	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
+	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
+	      FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomArea.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active area\'s \"data-value\" property');
+
+	      //clear out tooltip
+	      randomArea.dispatchEvent(new MouseEvent('mouseout'));
+	    });
+	  });
+	};
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	exports.default = createScatterPlotTests;
@@ -20749,6 +20900,8 @@ var FCC_Global =
 	var _jquery = __webpack_require__(1);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _globalD3Tests = __webpack_require__(54);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -20794,7 +20947,7 @@ var FCC_Global =
 	                var MAX_X_VALUE = MAX_YEAR;
 
 	                var dotsCollection = document.getElementsByClassName('dot');
-	                //convert to array    
+	                //convert to array
 	                var dots = [].slice.call(dotsCollection);
 	                FCC_Global.assert.isAbove(dots.length, 0, 'there are no elements with the class of "dot" ');
 	                dots.forEach(function (dot) {
@@ -20811,7 +20964,7 @@ var FCC_Global =
 
 	            it('7. The data-xvalue and its corresponding dot should align with the corresponding point/value on the x-axis.', function () {
 	                var dotsCollection = document.getElementsByClassName('dot');
-	                //convert to array    
+	                //convert to array
 	                var dots = [].slice.call(dotsCollection);
 	                FCC_Global.assert.isAbove(dots.length, 0, 'there are no elements with the class of "dot" ');
 	                //sort the dots based on xvalue in ascending order
@@ -20827,7 +20980,7 @@ var FCC_Global =
 
 	            it('8. The data-yvalue and its corresponding dot should align with the corresponding point/value on the y-axis.', function () {
 	                var dotsCollection = document.getElementsByClassName('dot');
-	                //convert to array    
+	                //convert to array
 	                var dots = [].slice.call(dotsCollection);
 	                FCC_Global.assert.isAbove(dots.length, 0, 'there are no elements with the class of "dot" ');
 	                //sort the dots based on yvalue in ascending order
@@ -20899,23 +21052,23 @@ var FCC_Global =
 	                var dots = (0, _jquery2.default)('.dot');
 
 	                // place mouse on random bar and check if tooltip is visible
-	                var randomIndex = FCC_Global.getRandomIndex(dots.length);
+	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(dots.length);
 	                var randomDot = dots[randomIndex];
 	                randomDot.dispatchEvent(new MouseEvent('mouseover'));
 
 	                // promise is used to prevent test from ending prematurely
 	                return new Promise(function (resolve, reject) {
-	                    // timeout is used to accomodate tooltip transitions
+	                    // timeout is used to accommodate tooltip transitions
 	                    setTimeout(function (_) {
-	                        if (FCC_Global.getToolTipStatus(tooltip) !== 'visible') {
-	                            reject('Tooltip should be visible when mouse is on a dot ');
+	                        if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'visible') {
+	                            reject(new Error('Tooltip should be visible when mouse is on a dot '));
 	                        }
 
 	                        // remove mouse from cell and check if tooltip is hidden again
 	                        randomDot.dispatchEvent(new MouseEvent('mouseout'));
 	                        setTimeout(function (_) {
-	                            if (FCC_Global.getToolTipStatus(tooltip) !== 'hidden') {
-	                                reject('Tooltip should be hidden when mouse is not on a dot ');
+	                            if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'hidden') {
+	                                reject(new Error('Tooltip should be hidden when mouse is not on a dot '));
 	                            } else {
 	                                resolve();
 	                            }
@@ -20928,7 +21081,7 @@ var FCC_Global =
 	                var tooltip = document.getElementById('tooltip');
 	                FCC_Global.assert.isNotNull(tooltip.getAttribute("data-year"), 'Could not find property "data-year" in tooltip ');
 	                var dots = (0, _jquery2.default)('.dot');
-	                var randomIndex = FCC_Global.getRandomIndex(dots.length);
+	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(dots.length);
 
 	                var randomDot = dots[randomIndex];
 
@@ -20940,7 +21093,7 @@ var FCC_Global =
 	}
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20954,9 +21107,11 @@ var FCC_Global =
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _education = __webpack_require__(56);
+	var _education = __webpack_require__(57);
 
 	var _education2 = _interopRequireDefault(_education);
+
+	var _globalD3Tests = __webpack_require__(54);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -21026,7 +21181,7 @@ var FCC_Global =
 	                    uniqueFipsFromChoropleth.push(+fips);
 	                }
 
-	                // iterate through each data point and make sure all given data appears on the Choropleth, and that the Choropleth doesn't contain extra data                      
+	                // iterate through each data point and make sure all given data appears on the Choropleth, and that the Choropleth doesn't contain extra data
 	                for (var j = 0; j < _education2.default.length; j++) {
 	                    // test that every value in the sample data is in the Choropleth
 	                    FCC_Global.assert.notEqual(uniqueFipsFromChoropleth.indexOf(educationDataFips[j]), -1, "Choropleth does not contain all fips from sample data ");
@@ -21061,7 +21216,7 @@ var FCC_Global =
 	                for (var i = 0; i < rects.length; i++) {
 	                    var rectColor = rects[i].style.fill || rects[i].getAttribute('fill');
 
-	                    // if the current color isn't in the uniqueColors arr, push it 
+	                    // if the current color isn't in the uniqueColors arr, push it
 	                    if (uniqueColors.indexOf(rectColor) === -1) {
 	                        uniqueColors.push(rectColor);
 	                    }
@@ -21079,22 +21234,22 @@ var FCC_Global =
 	                var counties = document.querySelectorAll('.county');
 
 	                // place mouse on random bar and check if tooltip is visible
-	                var randomIndex = FCC_Global.getRandomIndex(counties.length);
+	                var randomIndex = getRandomIndex(counties.length);
 	                var randomCounty = counties[randomIndex];
 	                randomCounty.dispatchEvent(new MouseEvent('mouseover'));
 
 	                // promise is used to prevent test from ending prematurely
 	                return new Promise(function (resolve, reject) {
-	                    // timeout is used to accomodate tooltip transitions
+	                    // timeout is used to accommodate tooltip transitions
 	                    setTimeout(function (_) {
-	                        if (FCC_Global.getToolTipStatus(tooltip) !== 'visible') {
+	                        if (getToolTipStatus(tooltip) !== 'visible') {
 	                            reject(new Error('Tooltip should be visible when mouse is on an area'));
 	                        }
 
 	                        // remove mouse from cell and check if tooltip is hidden again
 	                        randomCounty.dispatchEvent(new MouseEvent('mouseout'));
 	                        setTimeout(function (_) {
-	                            if (FCC_Global.getToolTipStatus(tooltip) !== 'hidden') {
+	                            if (getToolTipStatus(tooltip) !== 'hidden') {
 	                                reject(new Error('Tooltip should be hidden when mouse is not on an area'));
 	                            } else {
 	                                resolve();
@@ -21110,7 +21265,7 @@ var FCC_Global =
 
 	                var counties = document.querySelectorAll('.county');
 
-	                var randomIndex = FCC_Global.getRandomIndex(counties.length);
+	                var randomIndex = getRandomIndex(counties.length);
 
 	                var randomCounty = counties[randomIndex];
 
@@ -21122,11 +21277,13 @@ var FCC_Global =
 	                randomCounty.dispatchEvent(new MouseEvent('mouseoff'));
 	            });
 	        });
+
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'));
 	    });
 	}
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -39985,7 +40142,7 @@ var FCC_Global =
 	]
 
 /***/ },
-/* 57 */
+/* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39999,12 +40156,13 @@ var FCC_Global =
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
+	var _globalD3Tests = __webpack_require__(54);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function createTreeMapTests() {
 
 	  describe('#TreeMapTests', function () {
-
 	    describe('#Content', function () {
 	      it('1. My tree map should have a title with a corresponding id="title"', function () {
 	        FCC_Global.assert.isNotNull(document.getElementById('title'), 'Could not find element with id="title" ');
@@ -40102,66 +40260,13 @@ var FCC_Global =
 	        }
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be at least two fill colors used for the legend ');
 	      });
-	      it('10.  I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
-
-	        var firstRequestTimeout = 100;
-	        var secondRequestTimeout = 2000;
-	        this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
-	        FCC_Global.assert.isNotNull(document.getElementById('tooltip'), 'There should be an element with id="tooltip"');
-
-	        var tooltip = document.getElementById('tooltip');
-
-	        var tiles = document.querySelectorAll('.tile');
-
-	        // place mouse on random bar and check if tooltip is visible
-	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
-	        var randomTile = tiles[randomIndex];
-	        randomTile.dispatchEvent(new MouseEvent('mouseover'));
-	        randomTile.dispatchEvent(new MouseEvent('mousemove'));
-	        randomTile.dispatchEvent(new MouseEvent('mouseenter'));
-
-	        // promise is used to prevent test from ending prematurely
-	        return new Promise(function (resolve, reject) {
-	          // timeout is used to accomodate tooltip transitions
-	          setTimeout(function (_) {
-	            if (FCC_Global.getToolTipStatus(tooltip) !== 'visible') {
-	              reject(new Error('Tooltip should be visible when mouse is on an area'));
-	            }
-
-	            // remove mouse from cell and check if tooltip is hidden again
-	            randomTile.dispatchEvent(new MouseEvent('mouseout'));
-	            setTimeout(function (_) {
-	              if (FCC_Global.getToolTipStatus(tooltip) !== 'hidden') {
-	                reject(new Error('Tooltip should be hidden when mouse is not on an area'));
-	              } else {
-	                resolve();
-	              }
-	            }, secondRequestTimeout);
-	          }, firstRequestTimeout);
-	        });
-	      });
-	      it('11. My tooltip should have a "data-value" property that corresponds to the given value of the active tile.', function () {
-	        var tooltip = document.getElementById('tooltip');
-	        FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
-	        var tiles = document.querySelectorAll('.tile');
-	        var randomIndex = FCC_Global.getRandomIndex(tiles.length);
-
-	        var randomTile = tiles[randomIndex];
-
-	        randomTile.dispatchEvent(new MouseEvent('mouseover'));
-	        randomTile.dispatchEvent(new MouseEvent('mousemove'));
-	        randomTile.dispatchEvent(new MouseEvent('mouseenter'));
-	        FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomTile.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active tiles\'s \"data-value\" property');
-
-	        //clear out tooltip
-	        randomTile.dispatchEvent(new MouseEvent('mouseout'));
-	      });
 	    });
+	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.tile'));
 	  });
 	}
 
 /***/ },
-/* 58 */
+/* 59 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -40183,7 +40288,7 @@ var FCC_Global =
 	            var gapExpectedWidth = (window.innerWidth - centeredElementWidth) / 2;
 	            var delta = gapExpectedWidth - actualSideGap;
 	            console.log(gapExpectedWidth, actualSideGap, delta);
-	            return delta < 3 && delta > -3;
+	            return delta < 8.6 && delta > -3;
 	        }
 
 	        beforeEach(function () {});
@@ -40210,7 +40315,7 @@ var FCC_Global =
 	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #new-quote').length, 1, '#new-quote button is not a child of #quote-box ');
 	            });
 
-	            it('5. Within #quote-box, I can see a "tweet" button with corresponding id="tweet-quote".', function () {
+	            it('5. Within #quote-box, I can see a clickable "tweet" element with corresponding id="tweet-quote".', function () {
 	                FCC_Global.assert.isNotNull(document.getElementById("tweet-quote"));
 	                FCC_Global.assert.strictEqual(document.querySelectorAll('#quote-box #tweet-quote').length, 1, '#tweet-quote button is not a child of #quote-box ');
 	            });
@@ -40220,7 +40325,7 @@ var FCC_Global =
 	                return new Promise(function (resolve, reject) {
 	                    setTimeout(function (_) {
 	                        var text = document.getElementById("text");
-	                        if (text.innerText.length > 0) resolve();else reject("There is no initial quote displayed ");
+	                        if (text.innerText.length > 0) resolve();else reject(new Error("There is no initial quote displayed "));
 	                    }, requestTimeout);
 	                });
 	            });
@@ -40230,7 +40335,7 @@ var FCC_Global =
 	                return new Promise(function (resolve, reject) {
 	                    setTimeout(function (_) {
 	                        var author = document.getElementById("author");
-	                        if (author.innerText.length > 0) resolve();else reject("There is no initial author displayed ");
+	                        if (author.innerText.length > 0) resolve();else reject(new Error("There is no initial author displayed "));
 	                    }, requestTimeout);
 	                });
 	            });
@@ -40263,17 +40368,17 @@ var FCC_Global =
 	                }, requestTimeout);
 	            });
 
-	            it('10. I can tweet the current quote by clicking on the #tweet-quote button. This button should use the "twitter.com/intent/tweet" path to tweet the current quote.', function () {
+	            it('10. I can tweet the current quote by clicking on the #tweet-quote element. This element should use the "twitter.com/intent/tweet" path to tweet the current quote.', function () {
 	                this.timeout(requestTimeout + 1000);
-	                FCC_Global.assert.isOk(document.getElementById("tweet-quote").hasAttribute('href'), '#tweet-quote button must have an href attribute ');
+	                FCC_Global.assert.isOk(document.getElementById("tweet-quote").hasAttribute('href'), '#tweet-quote element must have an href attribute ');
 	                var href = document.getElementById("tweet-quote").href;
-	                FCC_Global.assert.include(href.toLowerCase(), 'twitter.com/intent/tweet', 'The #tweet-quote button does not utilize the correct twitter intent ');
+	                FCC_Global.assert.include(href.toLowerCase(), 'twitter.com/intent/tweet', 'The #tweet-quote element does not utilize the correct twitter intent ');
 	            });
 	        }); // END #Content
 
 	        describe("#Layout", function () {
 
-	            it('1. The #quote-box wrapper element should be horizontally centered.', function () {
+	            it('1. The #quote-box wrapper element should be horizontally centered. Please reset your browser\'s zoom level to 100%.', function () {
 	                FCC_Global.assert.isOk(testHorizontallyCentered('quote-box'));
 	            });
 	        }); // END #Layout
@@ -40281,7 +40386,7 @@ var FCC_Global =
 	} // END createRandomQuoteMachineTests()
 
 /***/ },
-/* 59 */
+/* 60 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40295,9 +40400,10 @@ var FCC_Global =
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
+	var _globalD3Tests = __webpack_require__(54);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// HEAT MAP TESTS: 
 	function createHeatMapTests() {
 
 	    describe('#HeatMapTests', function () {
@@ -40329,7 +40435,7 @@ var FCC_Global =
 	                for (var i = 0; i < cells.length; i++) {
 	                    var cellColor = cells[i].style.fill || cells[i].getAttribute('fill');
 
-	                    // if the current color isn't in the uniqueColors arr, push it 
+	                    // if the current color isn't in the uniqueColors arr, push it
 	                    if (uniqueColors.indexOf(cellColor) === -1) {
 	                        uniqueColors.push(cellColor);
 	                    }
@@ -40390,7 +40496,7 @@ var FCC_Global =
 	                var cellsCollection = document.querySelectorAll('.cell');
 	                FCC_Global.assert.isAbove(cellsCollection.length, 0, "Could not find any elements with a class=\"cell\" ");
 
-	                //convert to array    
+	                //convert to array
 	                var cells = [].slice.call(cellsCollection);
 	                var sortedCells = cells.sort(function (a, b) {
 	                    return a.getAttribute("data-month") - b.getAttribute("data-month");
@@ -40406,7 +40512,7 @@ var FCC_Global =
 	                var cellsCollection = document.querySelectorAll('.cell');
 	                FCC_Global.assert.isAbove(cellsCollection.length, 0, "Could not find any elements with a class=\"cell\" ");
 
-	                //convert to array    
+	                //convert to array
 	                var cells = [].slice.call(cellsCollection);
 	                var sortedCells = cells.sort(function (a, b) {
 	                    return a.getAttribute("data-year") - b.getAttribute("data-year");
@@ -40459,22 +40565,22 @@ var FCC_Global =
 	                var cells = document.querySelectorAll('.cell');
 
 	                // place mouse on random bar and check if tooltip is visible
-	                var randomIndex = FCC_Global.getRandomIndex(cells.length);
+	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(cells.length);
 	                var randomCell = cells[randomIndex];
 	                randomCell.dispatchEvent(new MouseEvent('mouseover'));
 
 	                // promise is used to prevent test from ending prematurely
 	                return new Promise(function (resolve, reject) {
-	                    // timeout is used to accomodate tooltip transitions
+	                    // timeout is used to accommodate tooltip transitions
 	                    setTimeout(function (_) {
-	                        if (FCC_Global.getToolTipStatus(tooltip) !== 'visible') {
+	                        if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'visible') {
 	                            reject(new Error('Tooltip should be visible when mouse is on a cell'));
 	                        }
 
 	                        // remove mouse from cell and check if tooltip is hidden again
 	                        randomCell.dispatchEvent(new MouseEvent('mouseout'));
 	                        setTimeout(function (_) {
-	                            if (FCC_Global.getToolTipStatus(tooltip) !== 'hidden') {
+	                            if ((0, _globalD3Tests.getToolTipStatus)(tooltip) !== 'hidden') {
 	                                reject(new Error('Tooltip should be hidden when mouse is not on a cell'));
 	                            } else {
 	                                resolve();
@@ -40489,7 +40595,7 @@ var FCC_Global =
 	                FCC_Global.assert.isNotNull(tooltip.getAttribute("data-year"), 'Could not find property \"data-year\" in tooltip ');
 
 	                var cells = document.querySelectorAll('.cell');
-	                var randomIndex = FCC_Global.getRandomIndex(cells.length);
+	                var randomIndex = (0, _globalD3Tests.getRandomIndex)(cells.length);
 
 	                var randomCell = cells[randomIndex];
 

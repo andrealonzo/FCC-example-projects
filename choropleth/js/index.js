@@ -80,7 +80,7 @@ function ready(error, us, education) {
       .attr("data-fips", function(d) {
         return d.id
        })
-      .attr("data-education", function(d) {
+      .attr("data-value", function(d) {
         var result = education.filter(function( obj ) {
           return obj.fips == d.id;
         });
@@ -114,7 +114,7 @@ function ready(error, us, education) {
           //could not find a matching fips id in the data
           return 0
         })
-      .attr("data-education", function() {
+      .attr("data-value", function() {
         var result = education.filter(function( obj ) {
           return obj.fips == d.id;
         });
