@@ -20831,7 +20831,7 @@ var FCC_Global =
 	/**
 	  Mouses over random areas to see if a tooltip appears
 	**/
-	function testToolTip(areas) {
+	function testToolTip(areas, attributeName) {
 	  describe('#Tooltip Tests', function () {
 	    it('1. I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 	      var firstRequestTimeout = 100;
@@ -20868,9 +20868,9 @@ var FCC_Global =
 	        }, firstRequestTimeout);
 	      });
 	    });
-	    it('2. My tooltip should have a "data-value" property that corresponds to the given value of the active area.', function () {
+	    it('2. My tooltip should have a "' + attributeName + '" property that corresponds to the given value of the active area.', function () {
 	      var tooltip = document.getElementById('tooltip');
-	      FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
+	      FCC_Global.assert.isNotNull(tooltip.getAttribute(attributeName), 'Could not find property "' + attributeName + '" in tooltip ');
 	      var randomIndex = getRandomIndex(areas.length);
 
 	      var randomArea = areas[randomIndex];
@@ -20878,7 +20878,7 @@ var FCC_Global =
 	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
 	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
 	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
-	      FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomArea.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active area\'s \"data-value\" property');
+	      FCC_Global.assert.equal(tooltip.getAttribute(attributeName), randomArea.getAttribute(attributeName), 'Tooltip\'s \"' + attributeName + '\" property should be equal to the active area\'s \"' + attributeName + '\" property');
 
 	      //clear out tooltip
 	      randomArea.dispatchEvent(new MouseEvent('mouseout'));
@@ -21149,14 +21149,14 @@ var FCC_Global =
 	                FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be at least four fill colors used for the counties ');
 	            });
 
-	            it('5. My counties should each have \"data-fips\" and \"data-value\" properties containing their corresponding fips and education values', function () {
+	            it('5. My counties should each have \"data-fips\" and \"data-education\" properties containing their corresponding fips and education values', function () {
 	                var counties = document.querySelectorAll('.county');
 	                FCC_Global.assert.isAbove(counties.length, 0, "Could not find any elements with a class=\"counties\" ");
 
 	                for (var i = 0; i < counties.length; i++) {
 	                    var county = counties[i];
 	                    FCC_Global.assert.isNotNull(county.getAttribute("data-fips"), "Could not find property \"data-fips\" in county ");
-	                    FCC_Global.assert.isNotNull(county.getAttribute("data-value"), "Could not find property \"data-value\" in county ");
+	                    FCC_Global.assert.isNotNull(county.getAttribute("data-education"), "Could not find property \"data-education\" in county ");
 	                }
 	            });
 
@@ -21166,7 +21166,7 @@ var FCC_Global =
 	                FCC_Global.assert.equal(counties.length, _education2.default.length);
 	            });
 
-	            it('7. The counties should have data-fips and data-value values that match the sample data', function () {
+	            it('7. The counties should have data-fips and data-education values that match the sample data', function () {
 	                var counties = document.querySelectorAll('.county');
 	                var educationDataFips = _education2.default.map(function (item) {
 	                    return item.fips;
@@ -21190,10 +21190,10 @@ var FCC_Global =
 	                    FCC_Global.assert.notEqual(educationDataFips.indexOf(uniqueFipsFromChoropleth[j]), -1, "Choropleth contains fips data not found in sample data ");
 	                }
 
-	                // check if the counties on the Choropleth have data-value values that correspond to the correct data-fips value
+	                // check if the counties on the Choropleth have data-education values that correspond to the correct data-fips value
 	                for (var k = 0; k < counties.length; k++) {
 	                    var countyFips = +counties[k].getAttribute('data-fips');
-	                    var countyEducation = counties[k].getAttribute('data-value');
+	                    var countyEducation = counties[k].getAttribute('data-education');
 
 	                    // get the index of the object in the sample data with a fips that matches the current county
 	                    var sampleIndex = _education2.default.findIndex(function (item) {
@@ -21225,7 +21225,7 @@ var FCC_Global =
 	            });
 	        });
 
-	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'));
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'), "data-education");
 	    });
 	}
 

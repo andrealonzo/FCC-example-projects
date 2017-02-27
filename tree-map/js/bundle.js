@@ -20831,7 +20831,7 @@ var FCC_Global =
 	/**
 	  Mouses over random areas to see if a tooltip appears
 	**/
-	function testToolTip(areas) {
+	function testToolTip(areas, attributeName) {
 	  describe('#Tooltip Tests', function () {
 	    it('1. I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area ', function () {
 	      var firstRequestTimeout = 100;
@@ -20868,9 +20868,9 @@ var FCC_Global =
 	        }, firstRequestTimeout);
 	      });
 	    });
-	    it('2. My tooltip should have a "data-value" property that corresponds to the given value of the active area.', function () {
+	    it('2. My tooltip should have a "' + attributeName + '" property that corresponds to the given value of the active area.', function () {
 	      var tooltip = document.getElementById('tooltip');
-	      FCC_Global.assert.isNotNull(tooltip.getAttribute("data-value"), 'Could not find property "data-value" in tooltip ');
+	      FCC_Global.assert.isNotNull(tooltip.getAttribute(attributeName), 'Could not find property "' + attributeName + '" in tooltip ');
 	      var randomIndex = getRandomIndex(areas.length);
 
 	      var randomArea = areas[randomIndex];
@@ -20878,7 +20878,7 @@ var FCC_Global =
 	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
 	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
 	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
-	      FCC_Global.assert.equal(tooltip.getAttribute('data-value'), randomArea.getAttribute('data-value'), 'Tooltip\'s \"data-value\" property should be equal to the active area\'s \"data-value\" property');
+	      FCC_Global.assert.equal(tooltip.getAttribute(attributeName), randomArea.getAttribute(attributeName), 'Tooltip\'s \"' + attributeName + '\" property should be equal to the active area\'s \"' + attributeName + '\" property');
 
 	      //clear out tooltip
 	      randomArea.dispatchEvent(new MouseEvent('mouseout'));
@@ -21223,62 +21223,9 @@ var FCC_Global =
 	                }
 	                FCC_Global.assert.isAtLeast(uniqueColors.length, 4, 'There should be at least four fill colors used for the legend ');
 	            });
-
-	            it('10. When I mouse over a county, a \"div\" element with a corresponding id=\"tooltip\" should become visible ', function () {
-	                var firstRequestTimeout = 100;
-	                var secondRequestTimeout = 2000;
-	                this.timeout(firstRequestTimeout + secondRequestTimeout + 1000);
-	                FCC_Global.assert.isNotNull(document.getElementById('tooltip'), 'There should be an element with id=\"tooltip\" ');
-
-	                var tooltip = document.getElementById('tooltip');
-	                var counties = document.querySelectorAll('.county');
-
-	                // place mouse on random bar and check if tooltip is visible
-	                var randomIndex = getRandomIndex(counties.length);
-	                var randomCounty = counties[randomIndex];
-	                randomCounty.dispatchEvent(new MouseEvent('mouseover'));
-
-	                // promise is used to prevent test from ending prematurely
-	                return new Promise(function (resolve, reject) {
-	                    // timeout is used to accommodate tooltip transitions
-	                    setTimeout(function (_) {
-	                        if (getToolTipStatus(tooltip) !== 'visible') {
-	                            reject(new Error('Tooltip should be visible when mouse is on an area'));
-	                        }
-
-	                        // remove mouse from cell and check if tooltip is hidden again
-	                        randomCounty.dispatchEvent(new MouseEvent('mouseout'));
-	                        setTimeout(function (_) {
-	                            if (getToolTipStatus(tooltip) !== 'hidden') {
-	                                reject(new Error('Tooltip should be hidden when mouse is not on an area'));
-	                            } else {
-	                                resolve();
-	                            }
-	                        }, secondRequestTimeout);
-	                    }, firstRequestTimeout);
-	                });
-	            });
-
-	            it('11. My tooltip should have a \"data-education\" property that corresponds to the given education of the active county', function () {
-	                var tooltip = document.getElementById('tooltip');
-	                FCC_Global.assert.isNotNull(tooltip.getAttribute("data-education"), 'Could not find property \"data-education\" in tooltip ');
-
-	                var counties = document.querySelectorAll('.county');
-
-	                var randomIndex = getRandomIndex(counties.length);
-
-	                var randomCounty = counties[randomIndex];
-
-	                randomCounty.dispatchEvent(new MouseEvent('mouseover'));
-
-	                FCC_Global.assert.equal(tooltip.getAttribute('data-education'), randomCounty.getAttribute('data-education'), 'Tooltip\'s \"data-education\" property should be equal to the active county\'s \"data-education\" property ');
-
-	                //clear out tooltip
-	                randomCounty.dispatchEvent(new MouseEvent('mouseoff'));
-	            });
 	        });
 
-	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'));
+	        (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.county'), "data-education");
 	    });
 	}
 
@@ -40261,7 +40208,7 @@ var FCC_Global =
 	        FCC_Global.assert.isAtLeast(uniqueColors.length, 2, 'There should be at least two fill colors used for the legend ');
 	      });
 	    });
-	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.tile'));
+	    (0, _globalD3Tests.testToolTip)(document.querySelectorAll('.tile'), 'data-value');
 	  });
 	}
 
