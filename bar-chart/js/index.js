@@ -123,6 +123,7 @@ d3.json('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/mas
     .style('fill', '#33adff')
     .attr('transform', 'translate(60, 0)')
     .on('mouseover', function(d, i) {
+      console.log("mouseover called")
       overlay.transition()
         .duration(0)
         .style('height', d + 'px')
