@@ -20763,19 +20763,32 @@ var FCC_Global =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function getToolTipStatus(tooltip) {
+	function isToolTipHidden(tooltip) {
 	  // jQuery's :hidden selector checks if the element or its parents have a display of none, a type of hidden, or height/width set to 0
 	  // if the element is hidden with opacity=0 or visibility=hidden, jQuery's :hidden will return false because it takes up space in the DOM
 	  // this test combines jQuery's :hidden with tests for opacity and visbility to cover most use cases (z-index and potentially others are not tested)
-	  if ((0, _jquery2.default)(tooltip).is(':hidden') || tooltip.style.opacity === '0' || tooltip.style.visibility === 'hidden') {
-	    return 'hidden';
-	  } else {
-	    return 'visible';
-	  }
+	  return (0, _jquery2.default)(tooltip).is(':hidden') || tooltip.style.opacity === '0' || tooltip.style.visibility === 'hidden';
 	}
 
 	function getRandomIndex(max) {
 	  return Math.floor(Math.random() * max);
+	}
+
+	/**
+	  JQuery's mouseevents don't work for non IE browsers in these tests.  
+	  This is a workaround to handle IE and non IE mouse events
+	**/
+	function triggerMouseEvent(area, mouseEvent) {
+	  var event;
+	  if (document.createEvent) {
+	    // Internet Explorer
+	    event = document.createEvent("MouseEvent");
+	    event.initMouseEvent(mouseEvent, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+	  } else {
+	    // Non IE browser
+	    event = new MouseEvent(mouseEvent);
+	  }
+	  area.dispatchEvent(event);
 	}
 
 	/**
@@ -20795,27 +20808,22 @@ var FCC_Global =
 	      // place mouse on random bar and check if tooltip is visible
 	      var randomIndex = getRandomIndex(areas.length);
 	      var randomArea = areas[randomIndex];
-
-	      //  $(randomArea).trigger("mouseenter");
-	      //  $(randomArea).trigger("mousemove");      
-	      //  $(randomArea).trigger("mouseover");
-	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
-	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
-	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
+	      triggerMouseEvent(randomArea, "mouseover");
+	      triggerMouseEvent(randomArea, "mousemove");
+	      triggerMouseEvent(randomArea, "mouseenter");
 
 	      // promise is used to prevent test from ending prematurely
 	      return new Promise(function (resolve, reject) {
 	        // timeout is used to accomodate tooltip transitions
 	        setTimeout(function (_) {
-	          if (getToolTipStatus(tooltip) !== 'visible') {
+	          if (isToolTipHidden(tooltip)) {
 	            reject(new Error('Tooltip should be visible when mouse is on an area'));
 	          }
 
 	          // remove mouse from cell and check if tooltip is hidden again  
-	          //  $(randomArea).mouseout();
-	          randomArea.dispatchEvent(new MouseEvent('mouseout'));
+	          triggerMouseEvent(randomArea, "mouseout");
 	          setTimeout(function (_) {
-	            if (getToolTipStatus(tooltip) !== 'hidden') {
+	            if (!isToolTipHidden(tooltip)) {
 	              reject(new Error('Tooltip should be hidden when mouse is not on an area'));
 	            } else {
 	              resolve();
@@ -20831,17 +20839,14 @@ var FCC_Global =
 
 	      var randomArea = areas[randomIndex];
 
-	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
-	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
-	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
-	      //  $(randomArea).mouseenter();
-	      //  $(randomArea).mousemove();
-	      //  $(randomArea).mouseover();
+	      triggerMouseEvent(randomArea, "mouseover");
+	      triggerMouseEvent(randomArea, "mousemove");
+	      triggerMouseEvent(randomArea, "mouseenter");
 
 	      FCC_Global.assert.equal(tooltip.getAttribute(toolTipDataName), randomArea.getAttribute(areaDataName), 'Tooltip\'s \"' + toolTipDataName + '\" property should be equal to the active area\'s \"' + areaDataName + '\" property');
 
 	      //clear out tooltip
-	      (0, _jquery2.default)(randomArea).mouseout();
+	      triggerMouseEvent(randomArea, "mouseout");
 	    });
 	  });
 	};
@@ -21111,9 +21116,14 @@ var FCC_Global =
 	                    var countyEducation = counties[k].getAttribute('data-education');
 
 	                    // get the index of the object in the sample data with a fips that matches the current county
-	                    var sampleIndex = _education2.default.findIndex(function (item) {
-	                        return item.fips === countyFips;
-	                    });
+	                    // polyfill for Array.findIndex
+	                    var sampleIndex = -1;
+	                    for (var i = 0; i < _education2.default.length; i++) {
+	                        if (_education2.default[i].fips == countyFips) {
+	                            sampleIndex = i;
+	                            break;
+	                        }
+	                    }
 	                    var sampleEducation = _education2.default[sampleIndex].bachelorsOrHigher;
 
 	                    FCC_Global.assert.equal(countyEducation, sampleEducation, "County fips and education data does not match ");
@@ -40076,16 +40086,15 @@ var FCC_Global =
 	          tilesByCategory[category].push(tiles[j]);
 	        }
 
-	        tilesByCategory = Object.values(tilesByCategory);
-
-	        // sort each category array by value
-	        tilesByCategory.forEach(function (category) {
+	        //sort tile values in each category
+	        for (var i = 0; i < tilesByCategory.length; i++) {
+	          var category = tilesByCategory[i];
 	          category.sort(function (tile1, tile2) {
 	            var tile1Value = tile1.getAttribute('data-value');
 	            var tile2Value = tile2.getAttribute('data-value');
 	            return tile1Value - tile2Value;
 	          });
-	        });
+	        }
 
 	        // outer loop loops through array category arrays
 	        for (var k = 0; k < tilesByCategory.length; k++) {
