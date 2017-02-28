@@ -21092,7 +21092,6 @@ var FCC_Global =
 	                    return item.fips;
 	                });
 	                var uniqueFipsFromChoropleth = [];
-
 	                // check for any duplicate fips values
 	                for (var i = 0; i < counties.length; i++) {
 	                    var fips = counties[i].getAttribute('data-fips');
@@ -21110,21 +21109,17 @@ var FCC_Global =
 	                    FCC_Global.assert.notEqual(educationDataFips.indexOf(uniqueFipsFromChoropleth[j]), -1, "Choropleth contains fips data not found in sample data ");
 	                }
 
+	                // index educationData by fips 
+	                var educationDataByFips = _education2.default.reduce(function (data, item) {
+	                    data[item.fips] = item;
+	                    return data;
+	                }, {});
+
 	                // check if the counties on the Choropleth have data-education values that correspond to the correct data-fips value
 	                for (var k = 0; k < counties.length; k++) {
 	                    var countyFips = +counties[k].getAttribute('data-fips');
 	                    var countyEducation = counties[k].getAttribute('data-education');
-
-	                    // get the index of the object in the sample data with a fips that matches the current county
-	                    // polyfill for Array.findIndex
-	                    var sampleIndex = -1;
-	                    for (var i = 0; i < _education2.default.length; i++) {
-	                        if (_education2.default[i].fips == countyFips) {
-	                            sampleIndex = i;
-	                            break;
-	                        }
-	                    }
-	                    var sampleEducation = _education2.default[sampleIndex].bachelorsOrHigher;
+	                    var sampleEducation = educationDataByFips[countyFips].bachelorsOrHigher;
 
 	                    FCC_Global.assert.equal(countyEducation, sampleEducation, "County fips and education data does not match ");
 	                }
