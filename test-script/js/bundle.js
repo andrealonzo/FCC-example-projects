@@ -20796,9 +20796,9 @@ var FCC_Global =
 	      var randomIndex = getRandomIndex(areas.length);
 	      var randomArea = areas[randomIndex];
 
-	      (0, _jquery2.default)(randomArea).trigger("mouseenter");
-	      (0, _jquery2.default)(randomArea).trigger("mousemove");
-	      (0, _jquery2.default)(randomArea).trigger("mouseover");
+	      //  $(randomArea).trigger("mouseenter");
+	      //  $(randomArea).trigger("mousemove");      
+	      //  $(randomArea).trigger("mouseover");
 	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
 	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
 	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
@@ -20831,9 +20831,12 @@ var FCC_Global =
 
 	      var randomArea = areas[randomIndex];
 
-	      (0, _jquery2.default)(randomArea).mouseenter();
-	      (0, _jquery2.default)(randomArea).mousemove();
-	      (0, _jquery2.default)(randomArea).mouseover();
+	      randomArea.dispatchEvent(new MouseEvent('mouseover'));
+	      randomArea.dispatchEvent(new MouseEvent('mousemove'));
+	      randomArea.dispatchEvent(new MouseEvent('mouseenter'));
+	      //  $(randomArea).mouseenter();
+	      //  $(randomArea).mousemove();
+	      //  $(randomArea).mouseover();
 
 	      FCC_Global.assert.equal(tooltip.getAttribute(toolTipDataName), randomArea.getAttribute(areaDataName), 'Tooltip\'s \"' + toolTipDataName + '\" property should be equal to the active area\'s \"' + areaDataName + '\" property');
 
