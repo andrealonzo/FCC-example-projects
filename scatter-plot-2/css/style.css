@@ -1,0 +1,50 @@
+
+.tooltip-title {
+  color: white;
+}
+
+#tooltip {
+  background-color: #2f2f30;
+  text-align: center;
+  color: red;
+  padding: 5px;
+}
+
+#title {
+  margin: 75px 0 75px 0;
+  text-align: center;
+  font-weight: bold;
+}
+
+#sub-title {
+  font-weight: normal;
+}
+
+#legend {
+  border: 1px solid black;
+  padding: 5px;
+  border-radius: 4px 4px 4px 4px;
+  font-size: 10px;
+  margin: 75px 0 0 320px;
+}
+
+.legend-key {
+  height: 7px;
+  width: 7px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 50%;
+}
+
+#tooltip {
+  margin: 20px 0 0 310px;
+  border-radius: 4px 4px 4px 4px;
+}
+
+#doping-legend-key {
+  background-color: #cc1c1c;
+}
+
+#no-doping-legend-key {
+  background-color: green;
+}
