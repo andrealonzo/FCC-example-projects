@@ -125,23 +125,6 @@ function renderScatterPlot(data) {
     .attr('transform', `translate(${xLabelPosition}, ${height - (margin.bottom / 1.5)})`)
 
 
- /*******************************
-        FAILED TEST DEBUGGING
- *******************************/
-  var dotsCollection = document.getElementsByClassName('dot');
-	                //convert to array
-	                var dots = [].slice.call(dotsCollection);
-
-                  //sort the dots based on yvalue in ascending order
-	                var sortedDots = dots.sort(function (a, b) {
-	                    return new Date(a.getAttribute("data-yvalue")) - new Date(b.getAttribute("data-yvalue"));
-	                });
-
-	                //check to see if the y locations of the new sorted array are in ascending order
-	                for (var i = 0; i < sortedDots.length - 1; ++i) {
-	                    console.log(sortedDots[i].cy.baseVal.value);
-                      console.log(sortedDots[i + 1].cy.baseVal.value);
-	                }
 }
 
 $.getJSON('https://raw.githubusercontent.com/FreeCodeCamp/ProjectReferenceData/master/cyclist-data.json', (data) => renderScatterPlot(data));
