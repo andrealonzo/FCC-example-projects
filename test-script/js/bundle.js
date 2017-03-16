@@ -40481,6 +40481,11 @@ var FCC_Global =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function getMonthFromString(mon) {
+	    if (mon <= 0 && mon >= 12) return mon;
+	    return new Date(Date.parse(mon + " 1, 2017")).getMonth();
+	}
+
 	function createHeatMapTests() {
 
 	    describe('#HeatMapTests', function () {
@@ -40570,19 +40575,59 @@ var FCC_Global =
 	            });
 
 	            it('9. My heat map should have cells that align with the corresponding month on the y-axis.', function () {
+	                // const cellsCollection = document.querySelectorAll('.cell');
+	                // FCC_Global.assert.isAbove(cellsCollection.length, 0, "Could not find any elements with a class=\"cell\" ");
+	                // 
+	                // //convert to array
+	                // const cells = [].slice.call(cellsCollection);
+	                // const sortedCells = cells.sort(function(a, b) {
+	                //     return a.getAttribute("data-month") - b.getAttribute("data-month");
+	                // })
+	                // 
+	                // //check to see if the y locations of the new sorted array are in ascending order
+	                // for (var i = 0; i < sortedCells.length - 1; ++i) {
+	                //     FCC_Global.assert.isAtMost(+sortedCells[i].getAttribute("y"), +sortedCells[i + 1].getAttribute("y"), "month values don't line up with y locations ")
+	                // }
+
+	                //get axis order for y axis
 	                var cellsCollection = document.querySelectorAll('.cell');
 	                FCC_Global.assert.isAbove(cellsCollection.length, 0, "Could not find any elements with a class=\"cell\" ");
 
-	                //convert to array
-	                var cells = [].slice.call(cellsCollection);
-	                var sortedCells = cells.sort(function (a, b) {
-	                    return a.getAttribute("data-month") - b.getAttribute("data-month");
+	                //sort y axis values by y locations in ascending order
+	                var sortedCells = [].slice.call(cellsCollection).sort(function (a, b) {
+	                    //using jquery instead of looking at the svg transform property
+	                    return (0, _jquery2.default)(a).position().top - (0, _jquery2.default)(b).position().top;
 	                });
 
-	                //check to see if the y locations of the new sorted array are in ascending order
-	                for (var i = 0; i < sortedCells.length - 1; ++i) {
-	                    FCC_Global.assert.isAtMost(+sortedCells[i].getAttribute("y"), +sortedCells[i + 1].getAttribute("y"), "month values don't line up with y locations ");
+	                //sort cells by y locations in ascending order
+	                var dotsCollection = document.getElementsByClassName('dot');
+	                FCC_Global.assert.isAbove(dotsCollection.length, 0, 'There are no elements with the class of "dot" ');
+
+	                var sortedDots = [].slice.call(dotsCollection).sort(function (a, b) {
+	                    return (0, _jquery2.default)(a).position().top - (0, _jquery2.default)(b).position().top;
+	                });
+
+	                //get sort order of y axis values
+	                var axisValues = [];
+	                //extract y axis values into array
+	                for (var i = 0; i < sortedTickLabels.length; i++) {
+	                    axisValues.push(sortedTickLabels[i].textContent);
 	                }
+
+	                var axisOrder = getSortOrder(axisValues);
+	                FCC_Global.assert.notStrictEqual(axisOrder, -1, 'Y axis labels are not sorted');
+
+	                ///get sort order of dot y values
+	                var dotValues = [];
+	                //extract dot y values into array
+	                for (var i = 0; i < sortedDots.length; i++) {
+	                    dotValues.push(new Date(sortedDots[i].getAttribute("data-yvalue")));
+	                }
+	                var dotOrder = getSortOrder(dotValues);
+	                FCC_Global.assert.notStrictEqual(dotOrder, -1, 'Dot y values do not line up properly');
+
+	                //check if they are the same
+	                FCC_Global.assert.strictEqual(dotOrder, axisOrder, 'Dot y values do not line up properly with y axis');
 	            });
 
 	            it('10. My heat map should have cells that align with the corresponding year on the x-axis.', function () {

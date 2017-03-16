@@ -1,0 +1,106 @@
+#title {
+  text-align: center;
+  margin: 30px 0 20px 0;
+}
+
+#main-title {
+  font-weight: bold;
+}
+
+.tooltip-title {
+  color: white;
+}
+
+#tooltip {
+  background-color: #2f2f30;
+  text-align: center;
+  color: red;
+  padding: 5px;
+  margin: 45px 0 0 45px;
+  border-radius: 4px 4px 4px 4px;
+}
+
+.cell:hover {
+  fill: white;
+}
+
+#legend {
+  margin-left: 85px;
+}
+
+#legend-text {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.key {
+  width: 40px;
+  height: 22px;
+  display: inline-block;
+  margin-right: -4px;
+  border: 1px solid black;
+  border-left: none;
+}
+
+.key-text {
+  width: 40px;
+  height: 22px;
+  display: inline-block;
+  margin-right: -4px;
+  text-align: center;
+  font-size: 10px;
+}
+
+#colours {
+  margin-bottom: -8px;
+}
+
+#key-1 {
+  background-color: #1144B0;
+  border-left: 1px solid black;
+}
+
+#key-2 {
+  background-color: #2F5CA3;
+}
+
+#key-3 {
+  background-color: #4D7497;
+}
+
+#key-4 {
+  background-color: #6C8D8A;
+}
+
+#key-5 {
+  background-color: #8AA57E;
+  border-right: 2px black solid;
+}
+
+#key-6 {
+  background-color: #A8BD71;
+}
+
+#key-7 {
+  background-color: #C7D665;
+}
+
+#key-8 {
+  background-color: #C2AB50;
+}
+
+#key-9 {
+  background-color: #BD803C;
+}
+
+#key-10 {
+  background-color: #B95528;
+}
+
+#key-11 {
+  background-color: #B42A14;
+}
+
+#key-12 {
+  background-color: #B00000;
+}
